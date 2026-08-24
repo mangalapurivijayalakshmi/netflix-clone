@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+
+    <link rel="stylesheet" href="{% static 'assets/style.css' %}">
+</head>
+<body>
+
+<header>
+    <div>
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'my_list' %}">My List</a>
+        <a href="{% url 'favorites' %}">Favorites</a>
+        <a href="{% url 'history' %}">History</a>
+        <a href="{% url 'watch_later' %}">Watch Later</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+        <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:1px solid var(--text-color);color:var(--text-color);padding:6px 12px;border-radius:20px;cursor:pointer;">🌙</button>
+    
+    
+    </div>
+
+</header>
+
+<div class="dashboard">
+
+    <h1>Welcome {{ request.user.username }}</h1>
+
+    <div class="dashboard-grid">
+
+        <div class="dashboard-card">
+            <h2>🎬 Movies Watched</h2>
+            <h1>{{ watched_count }}</h1>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>❤️ Favorites</h2>
+            <h1 id="favorite-count">{{ favorite_count }}</h1>
+        
+        </div>
+
+        <div class="dashboard-card">
+            <h2>⏰ Watch Later</h2>
+            <h1>{{ watch_later_count }}</h1>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>⭐ Reviews</h2>
+            <h1>{{ review_count }}</h1>
+        </div>
+        <div class="dashboard-card">
+            <h2>🎬 Total Movies</h2>
+            <h1>{{ movie_count }}</h1>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>🎭 Total Genres</h2>
+            <h1>{{ genre_count }}</h1>
+        </div>
+    </div>
+
+</div>
+
+<script>
+const dashSocket = new WebSocket(
+    (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws/dashboard/'
+);
+
+dashSocket.onopen = function() {
+    console.log("Dashboard connected");
+};
+
+dashSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    if (data.favorite_count !== undefined) {
+        document.getElementById('favorite-count').innerText = data.favorite_count;
+    }
+};
+
+dashSocket.onerror = function(e) {
+    console.log("Dashboard socket error:", e);
+};
+</script>
+<script>
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-toggle').innerText = theme === 'light' ? '☀️' : '🌙';
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    }
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    applyTheme(savedTheme);
+</script>
+</body>
+</html>

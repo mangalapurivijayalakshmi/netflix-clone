@@ -1,0 +1,31 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: hi\n"
+
+msgid "Home"
+msgstr "होम"
+
+msgid "My List"
+msgstr "मेरी सूची"
+
+msgid "Favorites"
+msgstr "पसंदीदा"
+
+msgid "History"
+msgstr "इतिहास"
+
+msgid "Notifications"
+msgstr "सूचनाएं"
+
+msgid "Profile"
+msgstr "प्रोफ़ाइल"
+
+msgid "Dashboard"
+msgstr "डैशबोर्ड"
+
+msgid "Logout"
+msgstr "लॉगआउट"
+
+msgid "Search"
+msgstr "खोजें"

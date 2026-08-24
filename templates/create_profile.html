@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Create Profile</title>
+
+    <link rel="stylesheet" href="{% static 'assets/style.css' %}">
+
+</head>
+
+<body>
+<button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:1px solid var(--text-color);color:var(--text-color);padding:6px 12px;border-radius:20px;cursor:pointer;">🌙</button>
+<h1 style="text-align:center;color:var(--text-color);margin-top:30px;">
+    👤 Create New Profile
+</h1>
+
+<div style="width:450px;
+            margin:40px auto;
+            background:var(--card-bg);
+            padding:30px;
+            border-radius:10px;">
+
+<form method="POST" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit"
+            style="padding:10px 20px;">
+        Create Profile
+    </button>
+
+</form>
+
+<br>
+
+<a href="{% url 'profile' %}"
+   style="color:var(--text-color);">
+    ← Back to Profile
+</a>
+
+</div>
+<script>
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-toggle').innerText = theme === 'light' ? '☀️' : '🌙';
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    }
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    applyTheme(savedTheme);
+</script>
+</body>
+
+</html>

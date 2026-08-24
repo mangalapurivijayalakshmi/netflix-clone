@@ -1,0 +1,31 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: te\n"
+
+msgid "Home"
+msgstr "హోమ్"
+
+msgid "My List"
+msgstr "నా జాబితా"
+
+msgid "Favorites"
+msgstr "ఇష్టమైనవి"
+
+msgid "History"
+msgstr "చరిత్ర"
+
+msgid "Notifications"
+msgstr "నోటిఫికేషన్లు"
+
+msgid "Profile"
+msgstr "ప్రొఫైల్"
+
+msgid "Dashboard"
+msgstr "డాష్‌బోర్డ్"
+
+msgid "Logout"
+msgstr "లాగ్అవుట్"
+
+msgid "Search"
+msgstr "వెతకండి"

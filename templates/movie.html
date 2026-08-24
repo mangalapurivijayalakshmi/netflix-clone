@@ -1,0 +1,333 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ movie_details.title }}</title>
+
+    <link rel="stylesheet" href="{% static 'assets/style.css' %}?v=4">
+</head>
+<body>
+{% if messages %}
+<div style="margin:20px;">
+    {% for message in messages %}
+    <div style="background:{% if message.tags == 'error' %}#dc3545{% else %}#28a745{% endif %};
+                color:white;padding:12px;border-radius:8px;margin-bottom:10px;">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<header>
+    <div>
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'my_list' %}">My List</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+        <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:1px solid var(--text-color);color:var(--text-color);padding:6px 12px;border-radius:20px;cursor:pointer;">🌙</button>
+    </div>
+</header>
+
+<div class="movie-page">
+
+    <img src="{{ movie_details.image_cover.url }}" class="movie-banner">
+
+    <div class="movie-info">
+
+        <h1>{{ movie_details.title }}</h1>
+        <p><span id="watching-now">...</span>
+        {% if average_rating %}
+
+        <h3>
+           ⭐ Average Rating: {{ average_rating|default:"0"|floatformat:1 }}/5
+       </h3>
+
+{% endif %}
+
+        <p>
+            ⭐ {{ movie_details.rating }}
+            |
+            {{ movie_details.release_date|date:"Y" }}
+            |
+            {{ movie_details.genre.name }}
+            |
+            {{ movie_details.length }} min
+            |
+            {{ movie_details.age_limit }}
+        </p>
+
+        <p>{{ movie_details.description }}</p>
+
+        <hr>
+
+        <p><strong>Director:</strong> {{ movie_details.director }}</p>
+
+        <p><strong>Cast:</strong> {{ movie_details.cast }}</p>
+
+        <p><strong>Language:</strong> {{ movie_details.language }}</p>
+
+        <p><strong>Country:</strong> {{ movie_details.country }}</p>
+
+        <p><strong>Views:</strong> {{ movie_details.movie_views }}</p>
+    <div style="margin-top:20px; display:flex; gap:15px; flex-wrap:wrap;">
+
+        <a href="{{ embed_url }}" target="_blank">
+            <button style="padding:12px 25px;font-size:16px;">
+                ▶ Watch Trailer
+            </button>
+        </a>
+
+        <a href="{% url 'add_to_favorite' movie_details.uu_id %}">
+            <button style="padding:12px 25px;font-size:16px;">
+                ❤️ Add to Favorites
+            </button>
+        </a>
+        <a href="{% url 'create_watch_party' pk=movie_details.uu_id %}">
+            <button>🎉 Start Watch Party</button>
+        </a>
+
+        <button
+            onclick="shareMovie()"
+            style="padding:12px 25px;font-size:16px;cursor:pointer;">
+            📤 Share
+        </button>
+
+    </div>
+
+<br>
+        
+    <h2>Official Trailer</h2>
+
+    <div class="player-wrapper">
+        <div id="yt-player"></div>
+        <div id="subtitle-overlay" class="subtitle-overlay"></div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let ytPlayer;
+
+        // Subtitle data ని parse చేయడం
+        const subtitlesRaw = `{{ movie_details.subtitles|default:""|escapejs }}`;
+        const subtitleLines = subtitlesRaw.split("\n")
+            .filter(line => line.trim() !== "" && line.includes("|"))
+            .map(line => {
+                const [range, text] = line.split("|");
+                const [start, end] = range.split("-").map(Number);
+                return { start: start, end: end, text: text.trim() };
+            });
+
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('yt-player', {
+                height: '500',
+                width: '100%',
+                videoId: '{{ video_id }}',
+                events: {
+                    'onReady': startSubtitleLoop
+                }
+            });
+        }
+
+        function startSubtitleLoop() {
+            setInterval(() => {
+                if (!ytPlayer || typeof ytPlayer.getCurrentTime !== "function") return;
+
+                const currentTime = ytPlayer.getCurrentTime();
+                const overlay = document.getElementById('subtitle-overlay');
+
+                const match = subtitleLines.find(
+                    line => currentTime >= line.start && currentTime <= line.end
+                );
+
+                overlay.innerText = match ? match.text : "";
+            }, 300);
+        }
+    </script>
+        
+    </div>
+
+</div>
+<hr>
+<h2>Write a Review</h2>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        Submit Review
+    </button>
+
+</form>
+
+<hr>
+
+<h2>User Reviews</h2>
+
+<hr>
+<h2>💬 Live Chat</h2>
+
+<div id="comments-list" style="max-height:300px; overflow-y:auto; background:#1a1a1a; padding:15px; border-radius:10px; margin-bottom:15px;">
+    <!-- live comments ఇక్కడ వస్తాయి -->
+</div>
+<p id="typing-indicator" style="color:#aaa; font-style:italic; min-height:20px;"></p>
+
+<div style="display:flex; gap:10px;">
+    <input type="text" id="comment-input" placeholder="Type a message..." style="flex:1; padding:10px; border-radius:5px; border:none;">
+    <button onclick="sendComment()" style="padding:10px 20px;">Send</button>
+</div>
+
+{% for review in reviews %}
+
+<div style="background:#222;color:white;padding:15px;margin:15px 0;border-radius:10px;">
+
+    <h3>{{ review.user.username }}</h3>
+
+    <p>⭐ {{ review.rating }}/5</p>
+
+    <p>{{ review.review }}</p>
+
+</div>
+
+{% empty %}
+
+<p>No reviews available.</p>
+
+{% endfor %}
+
+<hr>
+
+<h2 style="margin:40px;">More Like This</h2>
+
+<div class="movie-grid">
+
+    {% for movie in similar_movies %}
+
+    <div style="width:220px;display:inline-block;margin:15px;">
+
+        <a href="{% url 'movie' movie.uu_id %}">
+
+            <img src="{{ movie.image_card.url }}"
+                 style="width:220px;height:320px;border-radius:10px;">
+
+        </a>
+
+        <h4 style="text-align:center;">
+            {{ movie.title }}
+        </h4>
+
+    </div>
+
+    {% empty %}
+
+    <p style="margin-left:20px;">No similar movies found.</p>
+
+    {% endfor %}
+
+</div>
+
+<script>
+
+function shareMovie(){
+
+    if(navigator.share){
+
+        navigator.share({
+            title: "{{ movie_details.title }}",
+            text: "Watch {{ movie_details.title }} on Netflix Inspired",
+            url: window.location.href
+        });
+
+    }else{
+
+        navigator.clipboard.writeText(window.location.href);
+
+        alert("Movie link copied successfully!");
+
+    }
+
+}
+</script>
+<script>
+const movieSocket = new WebSocket(
+    (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws/movie/{{ movie_details.uu_id }}/'
+);
+
+movieSocket.onopen = function() {
+    console.log("Movie room connected");
+};
+
+movieSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    
+    
+    if (data.type === "watching_count") {
+        
+        document.getElementById('watching-now').innerText = data.count;
+    } 
+    if (data.type === "new_comment") {
+        const list = document.getElementById('comments-list');
+        const div = document.createElement('div');
+        div.style.marginBottom = "10px";
+        div.innerHTML = `<strong style="color:#e50914;">${data.username}</strong>: ${data.text}`;
+        list.appendChild(div);
+        list.scrollTop = list.scrollHeight;
+    }
+    if (data.type === "typing") {
+        
+        const indicator = document.getElementById('typing-indicator');
+        
+        indicator.innerText = `${data.username} is typing...`;
+        clearTimeout(window.typingClearTimer);
+        window.typingClearTimer = setTimeout(() => {
+            indicator.innerText = "";
+        }, 5000);
+    }
+};
+
+function sendComment() {
+    const input = document.getElementById('comment-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    movieSocket.send(JSON.stringify({
+        type: "new_comment",
+        text: text
+    }));
+
+    input.value = '';
+}
+let typingSendTimer = null;
+document.getElementById('comment-input').addEventListener('input', function() {
+    if (typingSendTimer) return;
+
+    movieSocket.send(JSON.stringify({ type: "typing" }));
+
+    typingSendTimer = setTimeout(() => {
+        typingSendTimer = null;
+    }, 1500);
+});
+movieSocket.onerror = function(e) {
+    console.log("Movie socket error:", e);
+};
+</script>
+<script>
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-toggle').innerText = theme === 'light' ? '☀️' : '🌙';
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    }
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    applyTheme(savedTheme);
+</script>
+</body>
+</html>     

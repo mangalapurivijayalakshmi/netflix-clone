@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Clone - Genre</title>
+    <link rel="stylesheet" href="{% static 'assets/style.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<header>
+    <div>
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'my_list' %}">My List</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+        <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:1px solid var(--text-color);color:var(--text-color);padding:6px 12px;border-radius:20px;cursor:pointer;margin-left:15px;">🌙</button>
+    </div>
+
+    <form action="{% url 'search' %}" method="POST">
+        {% csrf_token %}
+        <input type="search" name="search_term" placeholder="Search">
+        <button type="submit">Search</button>
+    </form>
+</header>
+
+<section style="padding: 25px;">
+    <h2>{{ movie_genre|title }} Movies</h2>
+
+    <div style="margin: 20px 0;">
+        {% for g in genre %}
+            <a href="{% url}
+
+</section>
+<script>
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-toggle').innerText = theme === 'light' ? '☀️' : '🌙';
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    }
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    applyTheme(savedTheme);
+</script>
+</body>
+</html>

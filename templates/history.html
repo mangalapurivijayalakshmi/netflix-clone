@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch History</title>
+
+    <link rel="stylesheet" href="{% static 'assets/style.css' %}">
+</head>
+<body>
+
+<header>
+    <div>
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'my_list' %}">My List</a>
+        <a href="{% url 'favorites' %}">Favorites</a>
+        <a href="{% url 'history' %}">History</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+        <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:1px solid var(--text-color);color:var(--text-color);padding:6px 12px;border-radius:20px;cursor:pointer;">🌙</button>
+    </div>
+
+</header>
+
+<h1 style="text-align:center;color:var(--text-color);margin-top:30px;">
+📺 Watch History
+</h1>
+
+<div class="movie-grid">
+
+{% for item in history %}
+
+<div style="width:220px;display:inline-block;margin:15px;">
+
+    <a href="{% url 'movie' item.movie.uu_id %}">
+        <img src="{{ item.movie.image_card.url }}"
+             style="width:220px;height:320px;border-radius:10px;">
+    </a>
+
+    <h3 style="text-align:center;color:var(--text-color);">
+        {{ item.movie.title }}
+    </h3>
+
+</div>
+
+{% empty %}
+
+<h2 style="color:var(--text-color);text-align:center;">
+No Watch History Yet
+</h2>
+
+{% endfor %}
+
+</div>
+
+</body>
+<script>
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-toggle').innerText = theme === 'light' ? '☀️' : '🌙';
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    }
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    applyTheme(savedTheme);
+</script>
+</html>

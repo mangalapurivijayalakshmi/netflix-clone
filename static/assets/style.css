@@ -1,0 +1,688 @@
+:root {
+    --bg-color: #141414;
+    --text-color: #ffffff;
+    --header-bg: rgba(0,0,0,0.95);
+    --card-bg: #1f1f1f;
+    --input-bg: #333333;
+    --accent: #e50914;
+}
+
+[data-theme="light"] {
+    --bg-color: #f5f5f5;
+    --text-color: #141414;
+    --header-bg: rgba(255,255,255,0.95);
+    --card-bg: #ffffff;
+    --input-bg: #e0e0e0;
+    --accent: #e50914;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin:0;
+    padding-top:75px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family:Arial,sans-serif;
+    transition: background 0.3s, color 0.3s;
+}
+
+a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+header {
+    background: var(--header-bg);
+    padding: 18px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header a {
+    margin-right: 14px;
+}
+
+header form input,
+header form button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+header form input {
+    background:var(--input-bg);
+    color: var(--text-color);
+}
+
+header form button {
+    background: #e50914;
+    color: white;
+    cursor: pointer;
+}
+
+.movie-grid {
+    display:flex;
+    overflow-x:auto;
+    gap:15px;
+    padding-bottom:20px;
+}
+.movie-grid::-webkit-scrollbar{
+    display:none;
+}
+
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    padding: 40px;
+}
+
+.modal-content {
+    background: #222;
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.modal-content img {
+    width: 100%;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+.hero{
+
+position:relative;
+width: 100%;
+height:85vh;
+overflow:hidden;
+}
+
+.hero-image{
+
+width:100%;
+
+height:100%;
+
+object-fit:cover;
+
+filter:brightness(40%);
+
+}
+
+
+.movie-page{
+    width:90%;
+    margin:auto;
+    color:var(--text-color);
+    padding:30px;
+}
+
+.movie-banner{
+    width:100%;
+    height:500px;
+    object-fit:cover;
+    border-radius:12px;
+}
+
+.movie-info{
+    margin-top:30px;
+}
+
+.movie-info h1{
+    font-size:50px;
+}
+
+.movie-info p{
+    font-size:20px;
+    line-height:35px;
+}
+
+.movie-info button{
+    margin-top:20px;
+    padding:15px 35px;
+    font-size:18px;
+    cursor:pointer;
+    border:none;
+    border-radius:5px;
+}
+.film-card{
+    position:relative;
+    width:170px;
+    height:250px;
+    flex-shrink: 0;
+    background-size:cover;
+    background-position:center;
+    border-radius:10px;
+    overflow:hidden;
+    transition:0.4s;
+}
+
+.film-card:hover{
+    transform:scale(1.08);
+    z-index:10;
+}
+
+
+
+.hover-content{
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:rgba(0,0,0,0.8);
+    color:white;
+    padding:15px;
+    transform:translateY(100%);
+    transition:0.4s;
+}
+
+.film-card:hover .hover-content{
+    transform:translateY(0);
+}
+
+.hover-content button{
+    margin-top:10px;
+    padding:8px 20px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+.movie-row{
+    display:flex;
+    overflow-x:auto;
+    gap:15px;
+    padding:20px 0;
+    scroll-behavior:smooth;
+}
+
+.movie-row::-webkit-scrollbar{
+    display:none;
+}
+
+.movie-card{
+    min-width:220px;
+    height:320px;
+    border-radius:10px;
+    overflow:hidden;
+    flex-shrink:0;
+    transition:0.3s;
+}
+
+.movie-card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.movie-card:hover{
+    transform:scale(1.08);
+}
+.hero-slider{
+    position: relative;
+    width: 100%;
+    height: 650px;
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+.hero-slide{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    display:none;
+}
+.hero-slide.active{
+    display:block;
+}
+
+.hero-slide img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    filter:brightness(45%);
+}
+.hero-slide .hero-content{
+    position:absolute;
+    left:70px;
+    bottom:120px;
+    color:white;
+    max-width:600px;
+    z-index:10;
+}
+
+.hero-content h1{
+    font-size:65px;
+    margin-bottom:20px;
+}
+
+.hero-content p{
+    font-size:20px;
+    line-height:32px;
+   
+}
+.hero-content button{
+    padding:15px 35px;
+    background:#e50914;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:20px;
+    cursor:pointer;
+}
+/* Live Search */
+
+.search-container{
+    position: relative;
+    display: inline-block;
+}
+
+#searchResults{
+    position: absolute;
+    top: 45px;
+    left: 0;
+    width: 250px;
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 5px;
+    z-index: 9999;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.search-item{
+    padding: 10px;
+    border-bottom: 1px solid #444;
+}
+
+.search-item:last-child{
+    border-bottom: none;
+}
+
+.search-item a{
+    color: white;
+    text-decoration: none;
+    display: block;
+}
+
+.search-item:hover{
+    background: #e50914;
+}
+
+.progress-bar{
+    width:220px;
+    height:8px;
+    background:#444;
+    border-radius:10px;
+    margin-top:8px;
+}
+
+.progress-fill{
+    height:100%;
+    background:#e50914;
+    border-radius:10px;
+}
+.genre-filter{
+    display:flex;
+    gap:15px;
+    margin:20px 0;
+    flex-wrap:wrap;
+}
+
+.genre-filter a{
+    padding:10px 20px;
+    background:#333;
+    color:white;
+    border-radius:20px;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.genre-filter a:hover{
+    background:#e50914;
+}
+
+.genre-filter a.active{
+    background:#e50914;
+}
+
+.recent-searches{
+    margin:20px 0;
+}
+
+.recent-item{
+    display:inline-block;
+    background:#333;
+    color:white;
+    padding:8px 16px;
+    border-radius:20px;
+    margin:5px;
+    font-size:14px;
+    transition:0.3s;
+}
+
+.recent-item:hover{
+    background:#e50914;
+}
+/* Dashboard */
+
+.dashboard{
+    padding:40px;
+    color:var(--text-color);
+}
+
+.dashboard h1{
+    margin-bottom:30px;
+}
+
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.dashboard-card{
+    background: var(--card-bg);
+    border-radius:12px;
+    padding:25px;
+    text-align:center;
+    transition:.3s;
+    cursor:pointer;
+}
+
+.dashboard-card:hover{
+    transform:translateY(-5px);
+    background:#e50914;
+}
+
+.dashboard-card h2{
+    font-size:20px;
+    margin-bottom:15px;
+}
+
+.dashboard-card h1{
+    font-size:45px;
+}
+
+/*==================== NAVBAR ====================*/
+
+.navbar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:75px;
+    background: var(--header-bg);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 35px;
+    z-index:9999;
+}
+
+.nav-left,
+.nav-center,
+.nav-right{
+    display:flex;
+    align-items:center;
+}
+
+.nav-left{
+    gap:22px;
+}
+.nav-center{
+    flex:1;
+    justify-content:center;
+}
+
+.nav-right{
+    gap:15px;
+    margin-right:50px;
+}
+
+.nav-left a{
+    color:var(--text-color);
+    font-weight:bold;
+    outline: none;
+    text-decoration: none;
+    
+
+}
+.nav-left a:hover{
+    color:#e50914;
+}
+.nav-right a{
+    color: var(--text-color);
+    font-weight:bold;
+}
+.nav-right a:hover{
+    color:#e50914;
+}
+
+body{
+    padding-top:80px;
+}
+.selected-profile{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+}
+
+.selected-profile img{
+
+    width:45px;
+    height:45px;
+
+    border-radius:50%;
+    object-fit:cover;
+
+    border:2px solid white;
+
+}
+
+.selected-profile span{
+
+    font-size:18px;
+    font-weight:bold;
+    color:var(--text-color);
+
+}
+
+.logout-btn{
+
+    color:var(--text-color);
+    font-weight:bold;
+
+}
+
+.logout-btn:hover{
+
+    color:#e50914;
+
+}
+
+/* Search Suggestions */
+
+#searchResults{
+
+    position:absolute;
+
+    top:48px;
+    width:260px;
+
+    background:#1f1f1f;
+
+    border-radius:6px;
+
+    overflow:hidden;
+
+    z-index:9999;
+    display:none;
+}
+
+.search-item{
+
+    padding:12px;
+
+    border-bottom:1px solid #333;
+
+}
+
+.search-item a{
+
+    color:white;
+
+}
+
+.search-item:hover{
+
+    background:#e50914;
+
+}
+
+/* ==================== RESPONSIVE — TABLET (1024px మరియు అంతకంటే తక్కువ) ==================== */
+@media (max-width: 1024px) {
+    .hero-slider {
+        height: 450px;
+    }
+    .hero-content {
+        left: 40px;
+        bottom: 80px;
+        max-width: 80%;
+    }
+    .hero-content h1 {
+        font-size: 42px;
+    }
+    .movie-banner {
+        height: 350px;
+    }
+}
+
+/* ==================== RESPONSIVE — MOBILE (600px మరియు అంతకంటే తక్కువ) ==================== */
+@media (max-width: 600px) {
+
+    body {
+        padding-top: 60px;   /* navbar చిన్నదవుతుంది కాబట్టి */
+    }
+
+    /* Navbar చిన్న screens కి సర్దుబాటు */
+    .navbar {
+        height: 60px;
+        padding: 0 15px;
+    }
+    .nav-right {
+        margin-right: 0;
+        gap: 8px;
+    }
+    .nav-center {
+        display: none;   /* search bar ని చిన్న screen లో దాచడం, కావాలంటే hamburger menu లో పెట్టొచ్చు later */
+    }
+    .selected-profile span {
+        display: none;   /* profile పేరు దాచి, picture మాత్రమే చూపించడం, స్థలం ఆదా */
+    }
+
+    /* Hero Section */
+    .hero-slider {
+        height: 280px;
+        margin-bottom: 20px;
+    }
+    .hero-content {
+        left: 20px;
+        bottom: 40px;
+        max-width: 90%;
+    }
+    .hero-content h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    .hero-content p {
+        font-size: 14px;
+        line-height: 22px;
+    }
+    .hero-content button {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    /* Movie Detail Page */
+    .movie-banner {
+        height: 200px;
+        border-radius: 6px;
+    }
+    .movie-page {
+        width: 100%;
+        padding: 15px;
+    }
+    .movie-info h1 {
+        font-size: 26px;
+    }
+    .movie-info p {
+        font-size: 15px;
+        line-height: 24px;
+    }
+
+    /* Movie Cards / Rows — చిన్న cards, horizontal scroll అలాగే ఉంటుంది */
+    .film-card {
+        width: 140px;
+        height: 210px;
+        flex-shrink: 0;
+    }
+    .movie-card {
+        min-width: 130px;
+        height: 195px;
+    }
+
+    /* Search Results dropdown screen దాటకుండా */
+    #searchResults, .search-container #searchResults {
+        width: calc(100vw - 30px);
+        max-width: 260px;
+    }
+
+    /* Genre Filter buttons చిన్నవి */
+    .genre-filter a {
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+
+    /* Dashboard */
+    .dashboard {
+        padding: 20px;
+    }
+    .dashboard-card h1 {
+        font-size: 32px;
+    }
+}
+
+.player-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.subtitle-overlay {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.75);
+    color: #ffffff;
+    padding: 8px 18px;
+    border-radius: 5px;
+    font-size: 18px;
+    max-width: 80%;
+    text-align: center;
+    pointer-events: none;   /* ఇది overlay మీద click అయితే, కింద ఉన్న video కి వెళ్ళేలా */
+    z-index: 10;
+}

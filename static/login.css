@@ -1,0 +1,121 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(180deg, #000000, #141414);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signup-container {
+    width: 90%;
+    max-width: 360px;
+    background: rgba(0,0,0,0.8);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+.signup-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.signup-container input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 14px;
+    border: none;
+    border-radius: 6px;
+    background: #333;
+    color: white;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.signup-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #e50914;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.signup-btn:hover {
+    background: #f6121d;
+}
+
+.help-text {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.help-text a {
+    color: #b3b3b3;
+    text-decoration: none;
+}
+
+.help-text a:hover {
+    text-decoration: underline;
+}
+
+p {
+    text-align: center;
+    color: #ffb3b3;
+}
+/* Netflix Loader */
+
+#loader{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:black;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.loader-logo{
+    color:#E50914;
+    font-size:70px;
+    font-weight:bold;
+    letter-spacing:5px;
+    animation:zoom 2s infinite;
+}
+
+@keyframes zoom{
+
+    0%{
+        transform:scale(0.8);
+        opacity:0.3;
+    }
+
+    50%{
+        transform:scale(1.2);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(0.8);
+        opacity:0.3;
+    }
+
+}
+
+@media (max-width: 480px) {
+    .signup-container {
+        padding: 30px 20px;   /* peద్ద padding తగ్గించడం, screen కి సరిపోయేలా */
+    }
+    .loader-logo {
+        font-size: 40px;      /* 70px మొబైల్ కి చాలా పెద్దది */
+        letter-spacing: 3px;
+    }
+}

@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Party - {{ movie_details.title }}</title>
+    <link rel="stylesheet" href="{% static 'assets/style.css' %}">
+</head>
+<body>
+
+<header>
+    <div>
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'my_list' %}">My List</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+        <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:1px solid var(--text-color);color:var(--text-color);padding:6px 12px;border-radius:20px;cursor:pointer;">🌙</button>
+    </div>
+</header>
+
+<div style="padding: 30px; color: var(--text-color);">
+
+    <h1>{{ movie_details.title }} — Watch Party</h1>
+
+    <p>
+        Room Code: <strong id="room-code">{{ room_code }}</strong>
+        <button onclick="copyLink()">Invite Link Copy చేయండి</button>
+    </p>
+
+    <p style="color: #aaa; font-size: 14px;">
+        ఈ page URL ని మీ స్నేహితుడికి పంపండి — వాళ్ళు కూడా login అయ్యి ఇదే URL open చేస్తే, video sync అవుతుంది.
+    </p>
+
+    <div id="yt-player"></div>
+
+    <p id="connection-status" style="color: #aaa;">Connecting...</p>
+
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+    let player;
+    let ignoreRemote = false;
+
+    const partySocket = new WebSocket(
+        (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws/watchparty/{{ room_code }}/'
+    );
+
+    partySocket.onopen = function() {
+        document.getElementById('connection-status').innerText = "Connected! ఇద్దరూ ఒకేసారి చూడొచ్చు.";
+    };
+
+    partySocket.onerror = function(e) {
+        document.getElementById('connection-status').innerText = "Connection error.";
+        console.log("Watch party socket error:", e);
+    };
+
+    partySocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        if (!player) return;
+
+        ignoreRemote = true;
+        player.seekTo(data.time, true);
+        if (data.action === "play") {
+            player.playVideo();
+        } else if (data.action === "pause") {
+            player.pauseVideo();
+        }
+        setTimeout(() => { ignoreRemote = false; }, 500);
+    };
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('yt-player', {
+            height: '480',
+            width: '854',
+            videoId: '{{ video_id }}',
+            events: {
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    function onPlayerStateChange(event) {
+        if (ignoreRemote) return;
+
+        if (event.data === YT.PlayerState.PLAYING) {
+            partySocket.send(JSON.stringify({ action: "play", time: player.getCurrentTime() }));
+        } else if (event.data === YT.PlayerState.PAUSED) {
+            partySocket.send(JSON.stringify({ action: "pause", time: player.getCurrentTime() }));
+        }
+    }
+
+    function copyLink() {
+        navigator.clipboard.writeText(window.location.href);
+        alert("Link copy అయ్యింది! మీ స్నేహితుడికి పంపండి.");
+    }
+</script>
+<script>
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-toggle').innerText = theme === 'light' ? '☀️' : '🌙';
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    }
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    applyTheme(savedTheme);
+</script>
+</body>
+</html>

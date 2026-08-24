@@ -1,0 +1,72 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.profile-box {
+    width: 90%;
+    max-width: 420px;
+    margin: 60px auto;
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    text-align: center;
+}
+
+.profile-box h1 {
+    margin-bottom: 20px;
+}
+
+.profile-box img {
+    margin-bottom: 20px;
+    border: 3px solid #e50914;
+    object-fit: cover;
+}
+
+.profile-box p {
+    text-align: left;
+    margin: 10px 0;
+    color: var(--text-color);
+}
+
+.profile-box form {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.profile-box input,
+.profile-box textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 6px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    box-sizing: border-box;
+}
+
+.profile-box button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #e50914;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.profile-box button:hover {
+    background: #f6121d;
+}
+
+@media (max-width: 480px) {
+    .profile-box {
+        margin: 20px auto;
+        padding: 20px 16px;
+    }
+}

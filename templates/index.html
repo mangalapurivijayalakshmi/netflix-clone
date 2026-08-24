@@ -1,0 +1,644 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Clone</title>
+    <link rel="stylesheet" href="{% static 'assets/style.css' %}?v=3">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<header class="navbar">
+
+    <div class="nav-left">
+
+        <a href="{% url 'index' %}">{% trans "Home" %}</a>
+        <a href="{% url 'my_list' %}">{% trans "My List" %}</a>
+        <a href="{% url 'favorites' %}">{% trans "Favorites" %}</a>
+        <a href="{% url 'history' %}">{% trans "History" %}</a>
+
+        <a href="{% url 'notifications' %}">
+            🔔 {% trans "Notifications" %} (<span id="notif-count">{{ notification_count }}</span>)
+        </a>
+
+        <a href="{% url 'profile' %}">{% trans "Profile" %}</a>
+        <a href="{% url 'dashboard' %}">{% trans "Dashboard" %}</a>
+
+    </div>
+
+    <div class="nav-center">
+
+        <form action="{% url 'search' %}" method="POST">
+            {% csrf_token %}
+            <input type="search"
+                   id="searchInput"
+                   name="search_term"
+                   placeholder="Search"
+                   autocomplete="off">
+
+            <button type="submit">{% trans "Search" %}</button>
+        </form>
+        <div id="searchResults"></div>
+    </div>
+
+    <div class="nav-right">
+        {% if selected_profile_name %}
+    
+        <div class="selected-profile">
+
+            <img src="{{ selected_profile_avatar }}">
+
+            <span>{{ selected_profile_name }}</span>
+        </div>
+        {% endif %}
+
+        
+    <form action="{% url 'set_language' %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ request.path }}">
+        <select name="language" onchange="this.form.submit()" style="padding:6px;border-radius:5px;background:var(--input-bg);color:var(--text-color);border:none;">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_available_languages as AVAILABLE_LANGUAGES %}
+            {% for lang_code, lang_name in AVAILABLE_LANGUAGES %}
+                <option value="{{ lang_code }}" {% if lang_code == LANGUAGE_CODE %}selected{% endif %}>{{ lang_name }}</option>
+            {% endfor %}
+        </select>
+    </form>
+        <a href="{% url 'logout' %}">{% trans "Logout" %}</a>
+        <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:1px solid var(--text-color);color:var(--text-color);padding:6px 12px;border-radius:20px;cursor:pointer;">🌙</button>
+
+    </div>
+
+</header>
+
+<div class="hero-slider">
+
+{% for movie in featured_movies %}
+
+<div class="hero-slide {% if forloop.first %}active{% endif %}">
+
+    <img src="{{ movie.image_cover.url }}" class="hero-image">
+
+    <div class="hero-content">
+
+        <h1>{{ movie.title }}</h1>
+
+        <p>{{ movie.description|truncatewords:25 }}</p>
+
+        <a href="{% url 'movie' movie.uu_id %}">
+            <button>▶ Play</button>
+        </a>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>    
+'<h2 style="margin:30px;color:var(--text-color);">▶ Continue Watching</h2>'
+
+<div class="movie-grid">
+
+    {% for item in continue_watching %}
+
+    <div style="min-width:170px;">
+
+        <div class="film-card"
+            onclick="location.href='{% url 'movie' item.movie.uu_id %}'"
+            style="background-image:url('{{ item.movie.image_card.url }}');">
+        </div>
+
+    <div class="progress-bar">
+
+        <div class="progress-fill"
+            style="width:{{ item.progress }}%;">
+
+        </div>
+
+    </div>
+
+    <p style="text-align:center;;">
+        {{ item.progress }}% Watched
+    </p>
+
+</div>
+
+{% empty %}
+
+<p style="color: var(--text-color);">No movies watched yet.</p>
+
+    {% endfor %}
+
+    
+
+</div>
+
+<section style="padding: 25px;">
+
+<div class="genre-filter">
+
+<form method="GET" action="{% url 'index' %}" style="margin:20px 0;">
+
+    {% if selected_genre %}
+        <input type="hidden" name="genre" value="{{ selected_genre }}">
+    {% endif %}
+
+    <select name="sort">
+
+        <option value="">Sort Movies</option>
+
+        <option value="rating"
+            {% if sort == "rating" %}selected{% endif %}>
+            Highest Rating
+        </option>
+
+        <option value="latest"
+            {% if sort == "latest" %}selected{% endif %}>
+            Latest
+        </option>
+
+        <option value="views"
+            {% if sort == "views" %}selected{% endif %}>
+            Most Viewed
+        </option>
+
+        <option value="az"
+            {% if sort == "az" %}selected{% endif %}>
+            A-Z
+        </option>
+
+    </select>
+
+    <button type="submit">
+        Apply
+    </button>
+
+</form>
+    
+    <a href="{% url 'index' %}"
+       class="{% if not selected_genre %}active{% endif %}">
+       All
+    </a>
+
+    {% for g in genre %}
+
+    <a href="{% url 'index' %}?genre={{ g.name }}"
+       class="{% if selected_genre == g.name %}active{% endif %}">
+       {{ g.name }}
+    </a>
+
+    {% endfor %}
+
+</div>
+
+     <h2 class="row-title">🔥 Trending Now</h2>
+
+<div class="movie-grid">
+{% for movie in trending_movies %}
+
+<div class="film-card"
+     style="background-image:url('{{ movie.image_card.url }}');">
+
+    <div class="hover-content">
+
+        <h3>{{ movie.title }}</h3>
+
+        <p>⭐ {{ movie.rating }}</p>
+        <p>🔥 <span id="trend-count-{{ movie.uu_id }}">0</span> watching now</p>
+
+        <a href="{% url 'movie' movie.uu_id %}">
+            <button>▶ Play</button>
+        </a>
+
+    </div>
+
+</div>
+{% endfor %}
+</div>
+
+
+
+<h2 class="row-title">⭐ Top Rated</h2>
+
+<div class="movie-grid">
+{% for movie in top_rated_movies %}
+
+<div class="film-card"
+     onclick="showModal(this)"
+     data-title="{{ movie.title }}"
+     data-description="{{ movie.description }}"
+     data-release-date="{{ movie.release_date|date:'Y' }}"
+     data-genre="{{ movie.genre.name }}"
+     data-length="{{ movie.length }}"
+     data-image-card-url="{{ movie.image_card.url }}"
+     data-image-cover-url="{{ movie.image_cover.url }}"
+     data-video-url="{% url 'movie' movie.uu_id %}"
+     style="background-image:url('{{ movie.image_card.url }}');">
+</div>
+
+{% endfor %}
+</div>
+
+
+
+<h2 class="row-title">🎬 Netflix Inspired Originals</h2>
+
+<div class="movie-grid">
+{% for movie in original_movies %}
+
+<div class="film-card"
+     onclick="showModal(this)"
+     data-title="{{ movie.title }}"
+     data-description="{{ movie.description }}"
+     data-release-date="{{ movie.release_date|date:'Y' }}"
+     data-genre="{{ movie.genre.name }}"
+     data-length="{{ movie.length }}"
+     data-image-card-url="{{ movie.image_card.url }}"
+     data-image-cover-url="{{ movie.image_cover.url }}"
+     data-video-url="{% url 'movie' movie.uu_id %}"
+     style="background-image:url('{{ movie.image_card.url }}');">
+</div>
+
+{% endfor %}
+</div>
+
+
+
+<h2 class="row-title">🆕 Recently Added</h2>
+
+<div class="movie-grid">
+{% for movie in recent_movies %}
+
+<div class="film-card"
+     onclick="showModal(this)"
+     data-title="{{ movie.title }}"
+     data-description="{{ movie.description }}"
+     data-release-date="{{ movie.release_date|date:'Y' }}"
+     data-genre="{{ movie.genre.name }}"
+     data-length="{{ movie.length }}"
+     data-image-card-url="{{ movie.image_card.url }}"
+     data-image-cover-url="{{ movie.image_cover.url }}"
+     data-video-url="{% url 'movie' movie.uu_id %}"
+     style="background-image:url('{{ movie.image_card.url }}');">
+</div>
+
+{% endfor %}
+</div>
+
+
+
+<h2 class="row-title">🔝 Top 10 Today</h2>
+
+<div class="movie-grid">
+{% for movie in top10_movies %}
+
+<div class="film-card"
+     onclick="showModal(this)"
+     data-title="{{ movie.title }}"
+     data-description="{{ movie.description }}"
+     data-release-date="{{ movie.release_date|date:'Y' }}"
+     data-genre="{{ movie.genre.name }}"
+     data-length="{{ movie.length }}"
+     data-image-card-url="{{ movie.image_card.url }}"
+     data-image-cover-url="{{ movie.image_cover.url }}"
+     data-video-url="{% url 'movie' movie.uu_id %}"
+     style="background-image:url('{{ movie.image_card.url }}');">
+</div>
+
+{% endfor %}
+</div>
+<h2 class="row-title">🎯 Top Picks For You</h2>
+
+<div class="movie-grid">
+
+{% for movie in recommended_movies %}
+
+<div class="film-card"
+     onclick="location.href='{% url 'movie' movie.uu_id %}'"
+     style="background-image:url('{{ movie.image_card.url }}');">
+
+    <div class="hover-content">
+        <h3>{{ movie.title }}</h3>
+        <p>⭐ {{ movie.rating }}</p>
+
+        <a href="{% url 'movie' movie.uu_id %}">
+            <button>▶ Play</button>
+        </a>
+    </div>
+
+</div>
+
+{% empty %}
+
+<p style=";">
+    Watch more movies to get personalized recommendations.
+</p>
+
+{% endfor %}
+
+</div>
+
+<h2 class="row-title">❤️ Recommended For You</h2>
+
+<div class="movie-grid">
+
+    {% for movie in recommended_movies %}
+
+    <div class="film-card"
+         onclick="showModal(this)"
+         data-title="{{ movie.title }}"
+         data-description="{{ movie.description }}"
+         data-release-date="{{ movie.release_date|date:'Y' }}"
+         data-genre="{{ movie.genre.name }}"
+         data-length="{{ movie.length }}"
+         data-image-card-url="{{ movie.image_card.url }}"
+         data-image-cover-url="{{ movie.image_cover.url }}"
+         data-video-url="{% url 'movie' movie.uu_id %}"
+         style="background-image:url('{{ movie.image_card.url }}');">
+
+    </div>
+
+    {% empty %}
+
+    <p style=";">No recommendations yet.</p>
+
+    {% endfor %}
+
+</div>
+<h2 class="row-title">🎬 All Movies</h2>
+
+<div class="movie-grid">
+
+{% for movie in movies %}
+
+<div class="film-card"
+     onclick="location.href='{% url 'movie' movie.uu_id %}'"
+     style="background-image:url('{{ movie.image_card.url }}');">
+
+    <div class="hover-content">
+        <h3>{{ movie.title }}</h3>
+        <p>⭐ {{ movie.rating }}</p>
+
+        <a href="{% url 'movie' movie.uu_id %}">
+            <button>▶ Play</button>
+        </a>
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+<div style="text-align:center; margin:30px; ;">
+    {% if movies.has_previous %}
+        <a href="?page={{ movies.previous_page_number }}{% if selected_genre %}&genre={{ selected_genre }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" style="; margin:0 10px;">← Previous</a>
+    {% endif %}
+
+    <span>Page {{ movies.number }} of {{ movies.paginator.num_pages }}</span>
+
+    {% if movies.has_next %}
+        <a href="?page={{ movies.next_page_number }}{% if selected_genre %}&genre={{ selected_genre }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" style="; margin:0 10px;">Next →</a>
+    {% endif %}
+</div>
+
+</section>
+
+<div class="modal" id="movieModal">
+    <div class="modal-content">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h2>Movie Title</h2>
+            <button onclick="hideModal()">X</button>
+        </div>
+
+        <img src="" alt="Movie Image">
+
+        <div style="display:flex;justify-content:space-between;gap:10px;margin:10px 0;">
+            <span class="movie-year">Year</span>
+            <span class="movie-genre">Genre</span>
+            <span class="movie-length">Length</span>
+        </div>
+
+        <p class="movie-description"></p>
+
+        <div style="display:flex;gap:10px;align-items:center;">
+            <a href="" class="play-link">
+                <button type="button">Play</button>
+            </a>
+            <button id="addToListButton" type="button" onclick="addItemToList()">Add to List</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showModal(element) {
+        const title = element.getAttribute('data-title');
+        const description = element.getAttribute('data-description');
+        const releaseDate = element.getAttribute('data-release-date');
+        const genre = element.getAttribute('data-genre');
+        const length = element.getAttribute('data-length');
+        const imageCoverUrl = element.getAttribute('data-image-cover-url');
+        const dataVideoUrl = element.getAttribute('data-video-url');
+
+        const modal = document.getElementById('movieModal');
+        modal.querySelector('h2').textContent = title;
+        modal.querySelector('img').src = imageCoverUrl;
+        modal.querySelector('.movie-year').textContent = 'Year: ' + releaseDate;
+        modal.querySelector('.movie-genre').textContent = 'Genre: ' + genre;
+        modal.querySelector('.movie-length').textContent = 'Length: ' + length + ' min';
+        modal.querySelector('.movie-description').textContent = description;
+        modal.querySelector('.play-link').href = dataVideoUrl;
+        modal.style.display = 'block';
+    }
+
+    function hideModal() {
+        document.getElementById('movieModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('movieModal');
+        if (event.target === modal) {
+            hideModal();
+        }
+    }
+
+    function addItemToList() {
+        const modal = document.getElementById('movieModal');
+        const movieID = modal.querySelector('.play-link').href;
+
+        $.ajax({
+            url: "{% url 'add_to_list' %}",
+            type: "POST",
+            data: {
+                movie_id: movieID,
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            success: function(data) {
+                $('#addToListButton').text(data.message);
+                $('#addToListButton').prop('disabled', true);
+            },
+            error: function() {
+                alert('Error adding movie to list');
+            }
+        });
+    }
+</script>
+<script>
+
+let currentSlide = 0;
+
+const slides = document.querySelectorAll(".hero-slide");
+
+function showSlide(index){
+
+    slides.forEach(slide => {
+        slide.classList.remove("active");
+    });
+
+    slides[index].classList.add("active");
+
+}
+
+showSlide(currentSlide);
+
+setInterval(function(){
+
+    currentSlide++;
+
+    if(currentSlide >= slides.length){
+        currentSlide = 0;
+    }
+
+    showSlide(currentSlide);
+
+},5000);
+</script>
+
+<script>
+
+const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
+
+searchInput.addEventListener("keyup", function() {
+
+    let keyword = this.value;
+
+    fetch(`/search-suggestions/?q=${keyword}`)
+    .then(response => response.json())
+    .then(data => {
+
+        searchResults.innerHTML = "";
+        
+        if (data.length > 0 && keyword.trim() !== "") {
+            searchResults.style.display = "block";
+        } else {
+            searchResults.style.display = "none";
+        }
+        
+        data.forEach(movie => {
+
+            searchResults.innerHTML += `
+                <div class="search-item">
+                    <a href="/movie/${movie.id}/">${movie.title}</a>
+                </div>
+            `;
+
+        });
+
+    })
+    .catch(error => console.log(error));
+
+});
+
+</script>  
+<script>
+    const notifSocket = new WebSocket(
+        "ws://" + window.location.host + "/ws/notifications/"
+    );
+
+    notifSocket.onopen = function() {
+        console.log("Notification WebSocket connected");
+    };
+
+    notifSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+
+        // Update the count badge
+        const countSpan = document.getElementById("notif-count");
+        let currentCount = parseInt(countSpan.textContent);
+        countSpan.textContent = currentCount + 1;
+
+        // Show a toast popup
+        showToast(data.message);
+    };
+
+    notifSocket.onerror = function(e) {
+        console.log("WebSocket error:", e);
+    };
+
+    function showToast(message) {
+        const toast = document.createElement("div");
+        toast.textContent = message;
+        toast.style.cssText = `
+            position: fixed;
+            top: 90px;
+            right: 30px;
+            background: #e50914;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 99999;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: opacity 0.5s;
+        `;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+</script>
+<script>
+const trendingSocket = new WebSocket(
+    (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws/trending/'
+);
+
+trendingSocket.onopen = function() {
+    console.log("Trending WebSocket connected");
+};
+
+trendingSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    const badge = document.getElementById('trend-count-' + data.movie_id);
+    if (badge) {
+        badge.innerText = data.count;
+    }
+};
+
+trendingSocket.onerror = function(e) {
+    console.log("Trending socket error:", e);
+};
+</script>
+
+<script>
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-toggle').innerText = theme === 'light' ? '☀️' : '🌙';
+    }
+
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    }
+
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    applyTheme(savedTheme);
+</script>
+</body>
+</html>

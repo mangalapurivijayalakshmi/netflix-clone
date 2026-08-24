@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="{% static 'assets/style.css' %}">
+    <link rel="stylesheet" href="{% static 'profile.css' %}">
+</head>
+<body>
+    <button id="theme-toggle" onclick="toggleTheme()" style="background:none;border:1px solid var(--text-color);color:var(--text-color);padding:6px 12px;border-radius:20px;cursor:pointer;">🌙</button>
+    <div class="profile-box">
+    <h1>Profile</h1>
+
+    {% if profile.profile_pic %}
+        <img src="{{ profile.profile_pic.url }}" alt="Profile Picture" width="150" style="border-radius:50%;">
+    {% endif %}
+
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Status:</strong> <span id="online-status">⚪ Offline</span></p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update Profile</button>
+    </form>
+</div>
+<br>
+
+<a href="{% url 'create_profile' %}">
+    <button style="padding:10px 20px;flex-wrap: wrap;">
+        ➕ Create New Profile
+    </button>
+</a>
+
+<h2>Your Profiles</h2>
+
+<div style="display:flex;gap:20px;flex-wrap:wrap;">
+
+{% for p in profiles %}
+
+<div style="text-align:center;">
+    <a href="{% url 'select_profile' p.id %}" style="text-decoration:none;color:var(--text-color);">
+        {% if p.avatar %}
+            <img src="{{ p.avatar.url }}"
+                width="120"
+                height="120"
+                style="border-radius:50%;object-fit:cover;">
+        {% else %}
+            <img src="{% static 'assets/default-avatar.png' %}" width="120" height="120" style="border-radius:50%;object-fit:cover;">
+        {% endif %}
+        <h3>{{ p.profile_name }}</h3>
+    </a>
+</div>
+
+{% empty %}
+
+<p>No Profiles Created</p>
+
+{% endfor %}
+
+</div>
+
+<script>
+const presenceSocket = new WebSocket(
+    (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws/presence/'
+);
+
+presenceSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    if (data.status === "online") {
+        document.getElementById('online-status').innerText = "🟢 Online";
+    }
+};
+
+presenceSocket.onclose = function() {
+    document.getElementById('online-status').innerText = "⚪ Offline";
+};
+</script>
+<script>
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('theme-toggle').innerText = theme === 'light' ? '☀️' : '🌙';
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    }
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    applyTheme(savedTheme);
+</script>
+</body>
+</html>
