@@ -4,7 +4,7 @@
     --header-bg: rgba(0,0,0,0.95);
     --card-bg: #1f1f1f;
     --input-bg: #333333;
-    --accent: #e50914;
+    --accent: #6C1FC7;
 }
 
 [data-theme="light"] {
@@ -13,7 +13,7 @@
     --header-bg: rgba(255,255,255,0.95);
     --card-bg: #ffffff;
     --input-bg: #e0e0e0;
-    --accent: #e50914;
+    --accent: #6C1FC7;
 }
 
 * {
@@ -62,7 +62,7 @@ header form input {
 }
 
 header form button {
-    background: #e50914;
+    background: #6C1FC7;
     color: white;
     cursor: pointer;
 }
@@ -274,7 +274,7 @@ filter:brightness(40%);
 }
 .hero-content button{
     padding:15px 35px;
-    background:#e50914;
+    background:#6C1FC7;
     color:white;
     border:none;
     border-radius:6px;
@@ -317,7 +317,7 @@ filter:brightness(40%);
 }
 
 .search-item:hover{
-    background: #e50914;
+    background: #8532E0;
 }
 
 .progress-bar{
@@ -330,7 +330,7 @@ filter:brightness(40%);
 
 .progress-fill{
     height:100%;
-    background:#e50914;
+    background:#6C1FC7;
     border-radius:10px;
 }
 .genre-filter{
@@ -350,11 +350,11 @@ filter:brightness(40%);
 }
 
 .genre-filter a:hover{
-    background:#e50914;
+    background:#8532E0;
 }
 
 .genre-filter a.active{
-    background:#e50914;
+    background:#6C1FC7;
 }
 
 .recent-searches{
@@ -373,7 +373,7 @@ filter:brightness(40%);
 }
 
 .recent-item:hover{
-    background:#e50914;
+    background:#8532E0;
 }
 /* Dashboard */
 
@@ -403,7 +403,7 @@ filter:brightness(40%);
 
 .dashboard-card:hover{
     transform:translateY(-5px);
-    background:#e50914;
+    background:#8532E0;
 }
 
 .dashboard-card h2{
@@ -460,14 +460,14 @@ filter:brightness(40%);
 
 }
 .nav-left a:hover{
-    color:#e50914;
+    color:#8532E0;
 }
 .nav-right a{
     color: var(--text-color);
     font-weight:bold;
 }
 .nav-right a:hover{
-    color:#e50914;
+    color:#8532E0;
 }
 
 body{
@@ -510,7 +510,7 @@ body{
 
 .logout-btn:hover{
 
-    color:#e50914;
+    color:#8532E0;
 
 }
 
@@ -549,7 +549,7 @@ body{
 
 .search-item:hover{
 
-    background:#e50914;
+    background:#8532E0;
 
 }
 
@@ -575,10 +575,9 @@ body{
 @media (max-width: 600px) {
 
     body {
-        padding-top: 60px;   /* navbar చిన్నదవుతుంది కాబట్టి */
+        padding-top: 60px;
     }
 
-    /* Navbar చిన్న screens కి సర్దుబాటు */
     .navbar {
         height: 60px;
         padding: 0 15px;
@@ -588,13 +587,12 @@ body{
         gap: 8px;
     }
     .nav-center {
-        display: none;   /* search bar ని చిన్న screen లో దాచడం, కావాలంటే hamburger menu లో పెట్టొచ్చు later */
+        display: none;
     }
     .selected-profile span {
-        display: none;   /* profile పేరు దాచి, picture మాత్రమే చూపించడం, స్థలం ఆదా */
+        display: none;
     }
 
-    /* Hero Section */
     .hero-slider {
         height: 280px;
         margin-bottom: 20px;
@@ -617,7 +615,6 @@ body{
         font-size: 14px;
     }
 
-    /* Movie Detail Page */
     .movie-banner {
         height: 200px;
         border-radius: 6px;
@@ -634,7 +631,6 @@ body{
         line-height: 24px;
     }
 
-    /* Movie Cards / Rows — చిన్న cards, horizontal scroll అలాగే ఉంటుంది */
     .film-card {
         width: 140px;
         height: 210px;
@@ -645,19 +641,16 @@ body{
         height: 195px;
     }
 
-    /* Search Results dropdown screen దాటకుండా */
     #searchResults, .search-container #searchResults {
         width: calc(100vw - 30px);
         max-width: 260px;
     }
 
-    /* Genre Filter buttons చిన్నవి */
     .genre-filter a {
         padding: 8px 14px;
         font-size: 14px;
     }
 
-    /* Dashboard */
     .dashboard {
         padding: 20px;
     }
@@ -683,6 +676,6 @@ body{
     font-size: 18px;
     max-width: 80%;
     text-align: center;
-    pointer-events: none;   /* ఇది overlay మీద click అయితే, కింద ఉన్న video కి వెళ్ళేలా */
+    pointer-events: none;
     z-index: 10;
 }
