@@ -1,6 +1,23 @@
-# 🎬 Netflix Clone — Django Full-Stack Project
+# 🎬 CineVerse — Django Full-Stack Streaming Platform
 
-A feature-rich Netflix-inspired streaming platform built with Django, Django Channels (WebSockets), and Django REST Framework. This project replicates core Netflix functionality including multi-profile support, personalized recommendations, real-time features, and a custom subtitle system.
+A feature-rich streaming platform built with Django, Django Channels (WebSockets), and Django REST Framework, inspired by Netflix's UI and core features. This project demonstrates multi-profile support, personalized recommendations, real-time features, and a custom subtitle system.
+
+**🔗 Live Demo:** [https://netflix-clone-nbcj.onrender.com](https://netflix-clone-nbcj.onrender.com)
+*(Free-tier hosting — first load may take ~50 seconds while the server spins up)*
+
+---
+
+## 📸 Screenshots
+
+| Login | Home |
+|---|---|
+| ![Login](screenshots/login.png) | ![Home](screenshots/home.png) |
+
+| Movie Page | Dashboard |
+|---|---|
+| ![Movie](screenshots/movie.png) | ![Dashboard](screenshots/dashboard.png) |
+
+*(Add your own screenshots to a `screenshots/` folder in the repo and update the paths above.)*
 
 ---
 
@@ -57,10 +74,11 @@ A feature-rich Netflix-inspired streaming platform built with Django, Django Cha
 | Backend | Django 6.0 |
 | Real-time | Django Channels + Daphne (ASGI) |
 | API | Django REST Framework (Token Auth) |
-| Database | SQLite (dev) |
+| Database | SQLite (dev/demo) |
 | Caching / Channel Layer | Redis |
 | Frontend | Django Templates, vanilla JS, CSS (custom, responsive) |
 | Video | YouTube IFrame Player API |
+| Deployment | Render (Gunicorn + WhiteNoise) |
 
 ---
 
@@ -103,30 +121,51 @@ Movies (including subtitles) are managed through the Django Admin panel at `/adm
 
 ---
 
+## 🔐 Environment Variables
+
+This project reads sensitive configuration from environment variables (with safe local defaults), following 12-factor app principles for production deployments:
+
+| Variable | Purpose | Example |
+|---|---|---|
+| `SECRET_KEY` | Django cryptographic signing key | random 50-char string |
+| `DEBUG` | Enables/disables debug mode | `False` in production |
+| `ALLOWED_HOSTS` | Comma-separated list of allowed domains | `.onrender.com` |
+| `CSRF_TRUSTED_ORIGINS` | Trusted origins for CSRF protection | `https://yourapp.onrender.com` |
+| `REDIS_URL` | Redis connection string (caching + Channels) | `redis://host:6379` |
+
+For local development, sensible defaults are already set in `settings.py`, so the app runs out of the box without configuring these.
+
+---
+
 ## 📁 Project Structure
 
-```
 Netflix_Clone/
 ├── app/
-│   ├── models.py          # Movie, User Profile, Favorites, Reviews, etc.
-│   ├── views.py            # Web views
-│   ├── api_views.py        # REST API views
-│   ├── serializers.py      # DRF serializers
-│   ├── consumers.py        # WebSocket consumers
-│   ├── routing.py          # WebSocket URL routing
-│   ├── urls.py / api_urls.py
-│   └── templates/
+│ ├── models.py # Movie, User Profile, Favorites, Reviews, etc.
+│ ├── views.py # Web views
+│ ├── api_views.py # REST API views
+│ ├── serializers.py # DRF serializers
+│ ├── consumers.py # WebSocket consumers
+│ ├── routing.py # WebSocket URL routing
+│ ├── urls.py / api_urls.py
+│ └── templates/
 ├── Netflix_Clone/
-│   ├── settings.py
-│   └── asgi.py
+│ ├── settings.py
+│ └── asgi.py
 └── manage.py
-```
+
+---
+
+## ⚠️ Known Limitations
+
+- **Database persistence**: The demo deployment uses SQLite on Render's free tier, whose filesystem is ephemeral — data resets on every redeploy or restart. This is acceptable for a portfolio/demo project; a production version would migrate to PostgreSQL (Render offers a free tier) for persistent storage.
+- **Free-tier cold starts**: The hosted demo spins down after inactivity, so the first request after idle time can take up to 50 seconds.
 
 ---
 
 ## 📌 Notes
 
-- This is a learning/portfolio project inspired by Netflix's UI and features. Not affiliated with Netflix.
+- This is a learning/portfolio project inspired by Netflix's UI and features. Not affiliated with or endorsed by Netflix, Inc.
 - Video playback uses publicly available YouTube trailers/content.
 
 ---

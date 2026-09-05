@@ -321,11 +321,12 @@ filter:brightness(40%);
 }
 
 .progress-bar{
-    width:220px;
+    width:170px;
     height:8px;
     background:#444;
     border-radius:10px;
     margin-top:8px;
+    overflow: hidden;
 }
 
 .progress-fill{
