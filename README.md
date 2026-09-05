@@ -7,19 +7,12 @@ A feature-rich streaming platform built with Django, Django Channels (WebSockets
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
-| Login | Home |
-|---|---|
-| ![Login](screenshots/login.png) | ![Home](screenshots/home.png) |
-
-| Movie Page | Dashboard |
-|---|---|
-| ![Movie](screenshots/movie.png) | ![Dashboard](screenshots/dashboard.png) |
-
-*(Add your own screenshots to a `screenshots/` folder in the repo and update the paths above.)*
-
----
+![Login](screenshots/login.png)
+![Home](screenshots/home.png)
+![Movie](screenshots/movie.png)
+![Dashboard](screenshots/dashboard.png)
 
 ## ✨ Features
 
