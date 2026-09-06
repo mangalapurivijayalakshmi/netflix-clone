@@ -30,16 +30,21 @@
 
     <div class="nav-center">
 
-        <form action="{% url 'search' %}" method="POST">
-            {% csrf_token %}
-            <input type="search"
-                   id="searchInput"
-                   name="search_term"
-                   placeholder="Search"
-                   autocomplete="off">
+<form action="{% url 'search' %}" method="POST" id="searchForm">
+    {% csrf_token %}
+    <input type="search"
+           id="searchInput"
+           name="search_term"
+           placeholder="Search or 🎙️ speak..."
+           autocomplete="off">
 
-            <button type="submit">{% trans "Search" %}</button>
-        </form>
+    <button type="button" id="voiceSearchBtn" title="Voice Search" style="background:#333;color:white;border:none;border-radius:5px;padding:10px 14px;cursor:pointer;margin-left:5px;">
+        🎙️
+    </button>
+
+    <button type="submit">{% trans "Search" %}</button>
+</form>   
+        
         <div id="searchResults"></div>
     </div>
 
@@ -707,6 +712,49 @@ trendingSocket.onerror = function(e) {
     chatInput.addEventListener('keyup', function(e) {
         if (e.key === 'Enter') sendMessage();
     });
+</script>
+
+<script>
+    const voiceBtn = document.getElementById('voiceSearchBtn');
+    const searchInputVoice = document.getElementById('searchInput');
+    const searchFormVoice = document.getElementById('searchForm');
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition && voiceBtn) {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-IN';       // Indian English accent కి బాగా సరిపోతుంది
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = function() {
+            voiceBtn.innerText = '🔴';
+            voiceBtn.title = 'Listening...';
+        };
+
+        recognition.onresult = function(event) {
+            const spokenText = event.results[0][0].transcript;
+            searchInputVoice.value = spokenText;
+            searchFormVoice.submit();   // మాట్లాడిన వెంటనే search చేయడం
+        };
+
+        recognition.onerror = function(event) {
+            console.log('Voice recognition error:', event.error);
+            voiceBtn.innerText = '🎙️';
+            alert('Voice గుర్తించడంలో సమస్య వచ్చింది, మళ్ళీ try చేయండి.');
+        };
+
+        recognition.onend = function() {
+            voiceBtn.innerText = '🎙️';
+        };
+
+        voiceBtn.addEventListener('click', function() {
+            recognition.start();
+        });
+
+    } else if (voiceBtn) {
+        voiceBtn.style.display = 'none';   // Browser support చేయకపోతే బటన్ దాచేయడం
+    }
 </script>
 </body>
 </html>
