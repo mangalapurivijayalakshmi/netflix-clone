@@ -1,62 +1,120 @@
-# 🎬 CineVerse — Django Full-Stack Streaming Platform
+# 🎬 CineVerse — AI-Powered Streaming Platform
 
-A feature-rich streaming platform built with Django, Django Channels (WebSockets), and Django REST Framework, inspired by Netflix's UI and core features. This project demonstrates multi-profile support, personalized recommendations, real-time features, and a custom subtitle system.
+**CineVerse** is a full-stack, Netflix-style movie streaming web application built with **Django**, featuring a **real-time WebSocket architecture** and **six independent AI/ML features** — content-based recommendations, collaborative filtering, semantic search, voice search, sentiment analysis, and a conversational chatbot.
 
-**🔗 Live Demo:** [https://netflix-clone-nbcj.onrender.com](https://netflix-clone-nbcj.onrender.com)
-*(Free-tier hosting — first load may take ~50 seconds while the server spins up)*
+> Built as a hands-on project to apply Python Full Stack Development and AI/ML concepts together in one production-style application, rather than as isolated exercises.
 
 ---
 
-## Screenshots
+## 🚀 Live Demo
+
+🔗 **[Live URL — Render Deployment]** *(add your link here once live)*
+
+---
+
+## 📸 Screenshots
 
 ![Login](screenshots/login.png)
 ![Home](screenshots/home.png)
 ![Movie](screenshots/movie.png)
 ![Dashboard](screenshots/dashboard.png)
 
-## ✨ Features
+---
 
-### Authentication & Profiles
-- User Signup / Login / Logout
-- Multiple Profiles per account ("Who's watching" style, up to 5 profiles)
-- Profile pictures / avatars
+## 📋 Table of Contents
+- [Screenshots](#-screenshots)
+- [Key Highlights](#-key-highlights)
+- [Core Full-Stack Features](#-core-full-stack-features)
+- [Real-Time Architecture](#-real-time-architecture-django-channels--daphne--redis)
+- [AI / ML Features](#-ai--ml-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Setup & Installation](#-setup--installation-local)
+- [A Real Debugging Story](#-a-real-debugging-story)
+- [Future Roadmap](#-future-roadmap)
 
-### Movie Browsing
-- Genre-based filtering and sorting (rating, latest, views, A-Z)
-- Live search with autocomplete + recent search history
-- Pagination
-- Curated rows: Trending, Top Rated, Originals, Recently Added, Top 10, Recommended
+---
 
-### Personalization
-- Continue Watching with progress tracking
-- Watch History
-- Genre-based recommendation engine
-- My List, Favorites, and Watch Later (three independent saved lists)
-- User Dashboard with activity stats
+## ⭐ Key Highlights
 
-### Engagement
-- Reviews & star ratings (with average rating calculation)
-- Real-time notifications (via WebSockets)
-- **Watch Party** — synchronized group viewing with shareable room codes
-- Live chat + typing indicators on movie pages
-- Real-time "watching now" and trending counters
-- Online presence indicator
+| | |
+|---|---|
+| 🏗️ **Architecture** | ASGI-based Django app served via **Daphne**, using **Django Channels** + **Redis** for real-time, bidirectional communication |
+| 🤖 **AI/ML** | 6 distinct AI features: content-based & collaborative recommendations, semantic search, voice search, sentiment analysis, NLP chatbot |
+| 🔐 **Auth & Profiles** | Multi-profile accounts (like Netflix), Kids-mode content filtering |
+| ⚡ **Real-Time** | Live notifications, live "watching now" counters, live chat during playback, live dashboard stat updates — all pushed instantly via WebSockets, no page refresh |
+| 🌍 **i18n** | Multi-language UI support |
+| 🎨 **UX** | Dark/light theme, responsive design, live search-as-you-type |
 
-### Custom Subtitle System
-- Timestamp-based subtitle overlay synced with YouTube Player API
-- Managed via Django Admin (simple `start-end|text` format)
+---
 
-### REST API
-- Token-based authentication (Django REST Framework)
-- Endpoints for movies, genres, recommendations, favorites, watch later, my list, profiles, and notifications
-- Tested via Postman
+## 🧩 Core Full-Stack Features
 
-### Responsive Design
-- Mobile, tablet, and desktop layouts
-- Tested on real devices
+- **Authentication** — signup, login, logout, forgot-password flow
+- **Multi-Profile Accounts** — multiple viewer profiles per account (Netflix-style), including Kids profiles that automatically filter content by age rating
+- **Content Discovery** — Trending, Top Rated, Originals, Recently Added, Top 10, genre filters, sorting (rating / latest / views / A-Z)
+- **Continue Watching** — per-user watch-progress tracking (%) per movie
+- **My List / Favorites / Watch Later** — personal watchlists
+- **Reviews & Ratings** — 1–5 star ratings with written reviews
+- **Live Search-as-you-type** — instant AJAX search suggestions in the navbar
+- **Watch Party** — generate a shareable room code so multiple users can watch and chat together in sync
+- **Personal Dashboard** — live-updating stats (movies watched, favorites, reviews, etc.)
+- **Multi-language UI** — Django i18n with a language switcher
+- **Dark / Light Theme Toggle**
 
-### Internationalization
-- Multi-language support (English, Telugu, Hindi)
+---
+
+## ⚡ Real-Time Architecture (Django Channels + Daphne + Redis)
+
+Most of the "live" features in this app are not built with polling or page-refresh tricks — they use a genuine **ASGI WebSocket architecture**:
+
+```
+Browser (WebSocket) ⇄ Daphne (ASGI server) ⇄ Django Channels (Consumers) ⇄ Redis (Channel Layer)
+```
+
+- **Daphne** replaces the standard WSGI server to serve the app over ASGI, enabling it to handle both HTTP and long-lived WebSocket connections.
+- **Django Channels** defines WebSocket consumers that manage connection lifecycles (`connect`, `receive`, `disconnect`) per feature.
+- **Redis** acts as the **channel layer** — the message broker that lets one request (e.g., "movie added to favorites") broadcast an event to every relevant connected client in real time, even across multiple server processes.
+
+### Real-time features built on this stack:
+1. **Live Notifications** — when a user favorites a movie, a notification is pushed instantly to their open browser tab (toast popup + live badge count update) via a per-user Channels group.
+2. **Live "Watching Now" Counter** — a per-movie WebSocket group tracks and broadcasts how many users currently have that movie's page open.
+3. **Live Chat During Playback** — users watching the same movie can exchange live comments with typing indicators, broadcast through a per-movie Channels group.
+4. **Live Dashboard Updates** — stat cards (e.g., favorite count) update in real time across tabs without a page reload, using a per-user dashboard Channels group.
+
+This demonstrates practical understanding of **asynchronous, event-driven backend architecture** — a step beyond typical CRUD Django apps.
+
+---
+
+## 🤖 AI / ML Features
+
+This project intentionally implements **six different AI/ML techniques**, each solving a distinct real problem, rather than one single "AI feature bolted on."
+
+### 1. Content-Based Recommendation Engine
+**File:** `recommender.py`
+Combines each movie's genre, description, cast, director, and language into a text profile, vectorizes all movies using **TF-IDF** (`scikit-learn`), and computes **Cosine Similarity** between every pair. Powers the "More Like This" section on every movie page with true content similarity — not just "same genre."
+
+### 2. Collaborative Filtering — "Users Also Watched"
+**File:** `recommender.py` → `get_collaborative_recommendations()`
+An item-based collaborative filtering approach: for a given movie, it finds every user who watched it, then finds what *else* those users watched most often — surfacing patterns that content similarity alone can't see (e.g., two unrelated-genre movies that the same audience tends to watch together).
+
+### 3. Semantic / Smart Search
+**File:** `recommender.py` → `smart_search()`
+Reuses the TF-IDF vector space to power search-by-meaning: a query is vectorized and compared against every movie's profile via cosine similarity, so searching by an **actor name, plot detail, or theme** (not just the title) surfaces the right results — something a plain `title__icontains` search cannot do.
+
+### 4. Voice-Based Search
+**Frontend:** Web Speech API (`SpeechRecognition`)
+A microphone button in the navbar captures spoken queries directly in the browser (no server-side speech processing or API cost), transcribes them to text, and feeds them straight into the semantic search pipeline above — combining a hands-free UX layer with the existing AI search.
+
+### 5. Sentiment Analysis on Reviews
+**File:** `sentiment_analysis.py`
+A lightweight, explainable, rule-based NLP sentiment classifier: scores review text against curated positive/negative word sets with basic negation handling (e.g., "not good" correctly flips to negative), then tags each review as **Positive / Negative / Neutral**, displayed as a badge next to the review.
+
+### 6. Conversational Movie Chatbot
+**File:** `views.py` → `chatbot_api()`
+A rule-based NLP chatbot (floating widget on the homepage) that parses user intent — greetings, direct genre mentions, mood keywords ("sad", "funny", "scary" → mapped to genres), and "best/top rated" queries — then answers with live, ranked results pulled from the actual movie database.
+
+> **Design note:** Features 5 & 6 use deterministic, explainable rule-based NLP rather than a paid LLM API. This was a conscious engineering trade-off — zero ongoing cost, fully explainable behavior, and no external dependency — while the code is structured so either could be swapped for a real LLM (e.g., the Anthropic API) without changing the surrounding request/response flow.
 
 ---
 
@@ -64,105 +122,99 @@ A feature-rich streaming platform built with Django, Django Channels (WebSockets
 
 | Layer | Technology |
 |---|---|
-| Backend | Django 6.0 |
-| Real-time | Django Channels + Daphne (ASGI) |
-| API | Django REST Framework (Token Auth) |
-| Database | SQLite (dev/demo) |
-| Caching / Channel Layer | Redis |
-| Frontend | Django Templates, vanilla JS, CSS (custom, responsive) |
-| Video | YouTube IFrame Player API |
-| Deployment | Render (Gunicorn + WhiteNoise) |
+| Backend | Python, Django |
+| Real-time server | Daphne (ASGI) |
+| Real-time messaging | Django Channels, Redis (channel layer) |
+| Database | SQLite (dev) / PostgreSQL (production-ready) |
+| Frontend | HTML5, CSS3 (custom, CSS variables for theming), Vanilla JavaScript, jQuery |
+| AI / ML | scikit-learn (TF-IDF, Cosine Similarity), pandas, Web Speech API |
+| Deployment | Render |
+| Tools | Git, GitHub, VS Code |
 
 ---
 
-## 🚀 Getting Started
+## 📂 Project Structure
 
-### Prerequisites
-- Python 3.11+
-- Redis server (running locally or via a hosted provider)
+```
+Netflix_Clone/
+├── manage.py
+├── requirements.txt
+├── static/assets/style.css        # All custom styling
+├── staticfiles/                   # Collected static files (via collectstatic)
+├── Netflix_Clone/
+│   ├── settings.py                # Channels/Redis/ASGI config
+│   ├── asgi.py                    # ASGI application (Daphne entry point)
+│   └── urls.py
+├── app/
+│   ├── models.py                  # Movie, Genre, WatchHistory, Review, Notification, WatchPartyRoom, etc.
+│   ├── views.py                   # Core views + chatbot_api()
+│   ├── urls.py
+│   ├── consumers.py                # Channels WebSocket consumers (notifications, trending, movie room, dashboard)
+│   ├── routing.py                  # WebSocket URL routing
+│   ├── recommender.py              # TF-IDF recommendation + collaborative filtering + semantic search
+│   ├── sentiment_analysis.py       # Rule-based review sentiment classifier
+│   └── templates/
+│       ├── index.html              # Homepage incl. chatbot widget, voice search
+│       └── movie.html              # Movie detail incl. live chat, similar/collaborative sections
+```
 
-### Installation
+---
+
+## ⚙️ Setup & Installation (Local)
 
 ```bash
 # 1. Clone the repository
 git clone <your-repo-url>
 cd Netflix_Clone
 
-# 2. Create and activate a virtual environment
+# 2. Create & activate a virtual environment
 python -m venv myenv
-myenv\Scripts\activate      # Windows
-# source myenv/bin/activate # macOS/Linux
+myenv\Scripts\activate        # Windows
+# source myenv/bin/activate   # macOS/Linux
 
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Apply migrations
-python manage.py makemigrations
+# 4. Start Redis (required for Channels)
+# via Docker:
+docker run -p 6379:6379 redis
+# or install Redis locally
+
+# 5. Apply migrations
 python manage.py migrate
 
-# 5. Create an admin account
-python manage.py createsuperuser
+# 6. Collect static files
+python manage.py collectstatic --noinput
 
-# 6. Run the development server (ASGI, required for WebSockets)
-python manage.py runserver
+# 7. Run via Daphne (ASGI)
+daphne Netflix_Clone.asgi:application
 ```
 
-Visit `http://127.0.0.1:8000/` in your browser.
-
-### Adding Movies
-Movies (including subtitles) are managed through the Django Admin panel at `/admin/`.
+Then open **http://127.0.0.1:8000/index/** in your browser.
 
 ---
 
-## 🔐 Environment Variables
+## 🐞 A Real Debugging Story
 
-This project reads sensitive configuration from environment variables (with safe local defaults), following 12-factor app principles for production deployments:
+The "Continue Watching" progress bars were visually merging between movie cards. Investigation via browser DevTools revealed two stacked issues:
+1. A **CSS width mismatch** — `.progress-bar` (220px) was wider than its parent `.film-card` (170px), causing layout overflow between cards.
+2. Django's `collectstatic` was serving a **stale cached copy** of `style.css` from `staticfiles/`, even after the source file in `static/` had been edited — the fix only took effect after confirming the source was saved *and* re-running `collectstatic`.
 
-| Variable | Purpose | Example |
-|---|---|---|
-| `SECRET_KEY` | Django cryptographic signing key | random 50-char string |
-| `DEBUG` | Enables/disables debug mode | `False` in production |
-| `ALLOWED_HOSTS` | Comma-separated list of allowed domains | `.onrender.com` |
-| `CSRF_TRUSTED_ORIGINS` | Trusted origins for CSRF protection | `https://yourapp.onrender.com` |
-| `REDIS_URL` | Redis connection string (caching + Channels) | `redis://host:6379` |
-
-For local development, sensible defaults are already set in `settings.py`, so the app runs out of the box without configuring these.
+**Fix:** corrected the CSS width, added `overflow:hidden`, and verified via file timestamps that the collected static file actually matched the edited source before testing again — a realistic example of reproduce → inspect → isolate → verify workflow.
 
 ---
 
-## 📁 Project Structure
+## 🚀 Future Roadmap
 
-Netflix_Clone/
-├── app/
-│ ├── models.py # Movie, User Profile, Favorites, Reviews, etc.
-│ ├── views.py # Web views
-│ ├── api_views.py # REST API views
-│ ├── serializers.py # DRF serializers
-│ ├── consumers.py # WebSocket consumers
-│ ├── routing.py # WebSocket URL routing
-│ ├── urls.py / api_urls.py
-│ └── templates/
-├── Netflix_Clone/
-│ ├── settings.py
-│ └── asgi.py
-└── manage.py
+- Swap the rule-based chatbot for a real LLM (Anthropic API) for open-ended conversation
+- Hybrid recommendations (blend content-based + collaborative + popularity signals with weighted scoring)
+- Expand collaborative filtering accuracy with a larger, more active user base
+- Dockerize the full stack (Django + Redis + Daphne) for one-command deployment
+- Add automated tests (pytest + Django test client) for core views and the recommendation engine
 
 ---
 
-## ⚠️ Known Limitations
+## 👤 Author
 
-- **Database persistence**: The demo deployment uses SQLite on Render's free tier, whose filesystem is ephemeral — data resets on every redeploy or restart. This is acceptable for a portfolio/demo project; a production version would migrate to PostgreSQL (Render offers a free tier) for persistent storage.
-- **Free-tier cold starts**: The hosted demo spins down after inactivity, so the first request after idle time can take up to 50 seconds.
-
----
-
-## 📌 Notes
-
-- This is a learning/portfolio project inspired by Netflix's UI and features. Not affiliated with or endorsed by Netflix, Inc.
-- Video playback uses publicly available YouTube trailers/content.
-
----
-
-## 🙋 Author
-
-Built by Mangalapuri Vijayalakshmi as a full-stack learning project.
+**Mangalapuri Vijaya Lakshmi**
+📧 mangalapurivijayalakshmi1432@gmail.com
