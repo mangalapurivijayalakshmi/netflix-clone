@@ -185,7 +185,15 @@
 
 <div style="background:#222;color:white;padding:15px;margin:15px 0;border-radius:10px;">
 
-    <h3>{{ review.user.username }}</h3>
+    <h3>{{ review.user.username }}
+        {% if review.sentiment == "Positive" %}
+            <span style="background:#28a745;color:white;padding:3px 10px;border-radius:12px;font-size:12px;margin-left:10px;">😊 Positive</span>
+        {% elif review.sentiment == "Negative" %}
+            <span style="background:#dc3545;color:white;padding:3px 10px;border-radius:12px;font-size:12px;margin-left:10px;">😞 Negative</span>
+        {% else %}
+            <span style="background:#6c757d;color:white;padding:3px 10px;border-radius:12px;font-size:12px;margin-left:10px;">😐 Neutral</span>
+        {% endif %}
+    </h3>
 
     <p>⭐ {{ review.rating }}/5</p>
 
@@ -225,6 +233,34 @@
     {% empty %}
 
     <p style="margin-left:20px;">No similar movies found.</p>
+
+    {% endfor %}
+
+</div>
+<h2 style="margin:40px;">👥 Users Also Watched</h2>
+
+<div class="movie-grid">
+
+    {% for movie in collaborative_movies %}
+
+    <div style="width:220px;display:inline-block;margin:15px;">
+
+        <a href="{% url 'movie' movie.uu_id %}">
+
+            <img src="{{ movie.image_card.url }}"
+                 style="width:220px;height:320px;border-radius:10px;">
+
+        </a>
+
+        <h4 style="text-align:center;">
+            {{ movie.title }}
+        </h4>
+
+    </div>
+
+    {% empty %}
+
+    <p style="margin-left:20px;">Not enough data yet — watch more movies!</p>
 
     {% endfor %}
 

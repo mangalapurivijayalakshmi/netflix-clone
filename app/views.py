@@ -14,6 +14,13 @@ from .models import Genre, Movie, Movielist, Profile, WatchHistory,Review, Favor
 from .forms import SignUpForm, ProfileForm, ReviewForm, UserProfileForm
 from django.core.paginator import Paginator
 
+from .recommender import get_similar_movies, smart_search, get_collaborative_recommendations
+import os
+import json
+from anthropic import Anthropic
+
+from .sentiment_analysis import analyze_sentiment
+
 def get_active_profile(request):
     """Session లో ఎంచుకున్న profile ని తీసుకువస్తుంది. ఏదీ select చేయకపోతే None వస్తుంది."""
     profile_id = request.session.get("selected_profile")
@@ -226,6 +233,7 @@ def movie_detail(request, pk):
             review = form.save(commit=False)
             review.user = request.user
             review.movie = movie
+            review.sentiment = analyze_sentiment(review.review)
             review.save()
             messages.success(request, "Review submitted successfully!")
 
@@ -273,10 +281,13 @@ def movie_detail(request, pk):
     video_id_match = re.search(r"(?:v=|youtu\.be/|embed/)([a-zA-Z0-9_-]{11})", movie.video)
     video_id = video_id_match.group(1) if video_id_match else ""
 
-    similar_movies = Movie.objects.filter(
-        genre=movie.genre
+    similar_movies = get_similar_movies(movie, top_n=6)
+    if not similar_movies:
+        similar_movies = Movie.objects.filter(
+            genre=movie.genre
     ).exclude(id=movie.id)[:6]
-
+        
+    collaborative_movies = get_collaborative_recommendations(movie, top_n=6)     
     reviews = Review.objects.filter(movie=movie)
     average_rating = reviews.aggregate(
         Avg('rating')
@@ -288,6 +299,7 @@ def movie_detail(request, pk):
         'embed_url': embed_url,
         'video_id': video_id,
         'similar_movies': similar_movies,
+        'collaborative_movies':collaborative_movies,
         'form': form,
         'reviews': reviews,
         'average_rating': average_rating,
@@ -367,7 +379,16 @@ def search(request):
             request.session["recent_searches"] = recent
 
         movies = Movie.objects.filter(title__icontains=search_term) if search_term else Movie.objects.none()
+        if search_term:
+            exact_matches = list(Movie.objects.filter(title__icontains=search_term))
+            exact_ids = {m.uu_id for m in exact_matches}
+            
+            semantic_matches = smart_search(search_term, top_n=20)
+            semantic_matches = [m for m in semantic_matches if m.uu_id not in exact_ids]
 
+            movies = exact_matches + semantic_matches
+        else:
+            movies = []
         return render(request, "search.html", {
             "genre": genres,
             "movies": movies,
@@ -637,3 +658,95 @@ def watch_party_room(request, code):
         'video_id': video_id,
     }
     return render(request, 'watchparty.html', context)
+
+# Chatbot కోసం mood/keyword → genre mapping
+MOOD_TO_GENRE = {
+    "sad": "Drama", "emotional": "Drama", "cry": "Drama",
+    "happy": "Comedy", "funny": "Comedy", "laugh": "Comedy", "fun": "Comedy",
+    "scary": "Horror", "horror": "Horror", "fear": "Horror",
+    "romantic": "Romance", "love": "Romance",
+    "exciting": "Action", "action": "Action", "fight": "Action",
+    "thrilling": "Thriller", "suspense": "Thriller", "thriller": "Thriller",
+    "mystery": "Mystery", "detective": "Mystery",
+    "adventure": "Adventure", "journey": "Adventure",
+    "sci-fi": "Sci-Fi", "scifi": "Sci-Fi", "space": "Sci-Fi", "future": "Sci-Fi",
+    "fantasy": "Fantasy", "magic": "Fantasy",
+    "crime": "Crime",
+}
+
+GREETINGS = ["hi", "hello", "hey", "namaste", "హాయ్", "హలో"]
+
+
+@login_required(login_url='login')
+def chatbot_api(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST మాత్రమే అనుమతించబడుతుంది"}, status=400)
+
+    try:
+        body = json.loads(request.body)
+        user_message = body.get("message", "").strip()
+    except Exception:
+        return JsonResponse({"error": "Invalid request"}, status=400)
+
+    if not user_message:
+        return JsonResponse({"error": "Message ఖాళీగా ఉంది"}, status=400)
+
+    text = user_message.lower()
+
+    # 1. Greeting handling
+    if any(g in text for g in GREETINGS) and len(text.split()) <= 3:
+        return JsonResponse({
+            "reply": "Hi! 🎬 నేను CineVerse Assistant ని. మీకు ఏ mood లో సినిమా కావాలో చెప్పండి "
+                      "(ఉదా: 'sad movie', 'funny movie', 'action movie'), లేదా genre పేరు చెప్పండి "
+                      "(Action, Comedy, Drama, Horror, Romance, Thriller, Sci-Fi, Fantasy, Mystery, Adventure, Crime)."
+        })
+
+    # 2. Available genres నుండి, message లో ఏదైనా genre name directly match అవుతుందా చూడటం
+    all_genres = list(Genre.objects.values_list('name', flat=True))
+    matched_genre = None
+
+    for g in all_genres:
+        if g.lower() in text:
+            matched_genre = g
+            break
+
+    # 3. Genre direct గా దొరకకపోతే, mood keywords చెక్ చేయడం
+    if not matched_genre:
+        for keyword, genre_name in MOOD_TO_GENRE.items():
+            if keyword in text:
+                # ఈ genre_name నిజంగా DB లో ఉందో చెక్ చేయడం
+                if Genre.objects.filter(name__iexact=genre_name).exists():
+                    matched_genre = genre_name
+                    break
+
+    # 4. "best" / "top rated" / "top" లాంటి overall query
+    if not matched_genre and any(w in text for w in ["best", "top rated", "top", "highest rated"]):
+        movies = Movie.objects.order_by('-rating')[:5]
+        if movies:
+            lines = [f"⭐ {m.title} ({m.genre.name}) — Rating: {m.rating}" for m in movies]
+            reply = "ఇవి మా టాప్ రేటెడ్ సినిమాలు:\n" + "\n".join(lines)
+        else:
+            reply = "క్షమించండి, ప్రస్తుతం సినిమాలు లేవు."
+        return JsonResponse({"reply": reply})
+
+    # 5. Genre matched అయితే, ఆ genre లో టాప్ 5 సినిమాలు సూచించడం
+    if matched_genre:
+        movies = Movie.objects.filter(
+            genre__name__iexact=matched_genre
+        ).order_by('-rating')[:5]
+
+        if movies:
+            lines = [f"🎬 {m.title} — Rating: {m.rating} — {m.description[:80]}..." for m in movies]
+            reply = f"'{matched_genre}' genre లో ఇవి సూచిస్తున్నాను:\n" + "\n".join(lines)
+        else:
+            reply = f"క్షమించండి, '{matched_genre}' genre లో సినిమాలు ప్రస్తుతం లేవు."
+
+        return JsonResponse({"reply": reply})
+
+    # 6. ఏమీ match అవ్వకపోతే, fallback response with available genres
+    genre_list = ", ".join(all_genres)
+    reply = (
+        "క్షమించండి, అర్థం కాలేదు 🙏. మీకు నచ్చిన mood లేదా genre చెప్పండి.\n"
+        f"అందుబాటులో ఉన్న genres: {genre_list}"
+    )
+    return JsonResponse({"reply": reply})

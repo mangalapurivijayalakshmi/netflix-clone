@@ -66,6 +66,7 @@ class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(5)])
     review = models.TextField()
+    sentiment = models.CharField(max_length=10, default="Neutral")  
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

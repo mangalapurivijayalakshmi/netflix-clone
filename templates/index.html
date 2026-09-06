@@ -640,5 +640,73 @@ trendingSocket.onerror = function(e) {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     applyTheme(savedTheme);
 </script>
+
+<!-- 🤖 AI Chatbot Widget -->
+<div id="chatbot-toggle" style="position:fixed;bottom:25px;right:25px;width:60px;height:60px;border-radius:50%;background:#e50914;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:9999;box-shadow:0 4px 15px rgba(0,0,0,0.4);font-size:26px;">
+    🤖
+</div>
+
+<div id="chatbot-window" style="display:none;position:fixed;bottom:100px;right:25px;width:320px;height:420px;background:var(--card-bg);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.5);z-index:9999;flex-direction:column;overflow:hidden;">
+    <div style="background:#e50914;color:white;padding:14px;font-weight:bold;">
+        🎬 CineVerse AI Assistant
+    </div>
+    <div id="chatbot-messages" style="flex:1;padding:12px;overflow-y:auto;font-size:14px;color:var(--text-color);white-space:pre-line;"></div>
+    <div style="display:flex;border-top:1px solid #444;">
+        <input id="chatbot-input" type="text" placeholder="ఏం చూడాలో అడగండి..." style="flex:1;border:none;padding:10px;background:var(--input-bg);color:var(--text-color);">
+        <button id="chatbot-send" style="background:#e50914;color:white;border:none;padding:0 16px;cursor:pointer;">➤</button>
+    </div>
+</div>
+
+<script>
+    const chatToggle = document.getElementById('chatbot-toggle');
+    const chatWindow = document.getElementById('chatbot-window');
+    const chatMessages = document.getElementById('chatbot-messages');
+    const chatInput = document.getElementById('chatbot-input');
+    const chatSend = document.getElementById('chatbot-send');
+
+    chatToggle.addEventListener('click', function() {
+        chatWindow.style.display = (chatWindow.style.display === 'flex') ? 'none' : 'flex';
+    });
+
+    function addMessage(text, sender) {
+        const msg = document.createElement('div');
+        msg.style.margin = '8px 0';
+        msg.style.textAlign = sender === 'user' ? 'right' : 'left';
+        msg.innerHTML = `<span style="display:inline-block;padding:8px 12px;border-radius:10px;background:${sender === 'user' ? '#e50914' : '#333'};color:white;max-width:85%;">${text}</span>`;
+        chatMessages.appendChild(msg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function sendMessage() {
+        const text = chatInput.value.trim();
+        if (!text) return;
+        addMessage(text, 'user');
+        chatInput.value = '';
+        addMessage('Typing...', 'bot');
+
+        fetch("{% url 'chatbot_api' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ message: text })
+        })
+        .then(res => res.json())
+        .then(data => {
+            chatMessages.removeChild(chatMessages.lastChild);
+            addMessage(data.reply || data.error || "క్షమించండి, error వచ్చింది.", 'bot');
+        })
+        .catch(() => {
+            chatMessages.removeChild(chatMessages.lastChild);
+            addMessage("క్షమించండి, connect అవ్వలేదు.", 'bot');
+        });
+    }
+
+    chatSend.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+</script>
 </body>
 </html>

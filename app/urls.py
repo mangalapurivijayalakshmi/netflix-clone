@@ -38,4 +38,5 @@ urlpatterns = [
 
     path('watchparty/create/<uuid:pk>/', views.create_watch_party, name='create_watch_party'),
     path('watchparty/<str:code>/', views.watch_party_room, name='watch_party_room'),
+    path('chatbot/ask/', views.chatbot_api, name='chatbot_api'),
 ]
