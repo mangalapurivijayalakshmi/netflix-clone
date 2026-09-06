@@ -1,0 +1,529 @@
+[
+{
+  "model": "app.genre",
+  "pk": 1,
+  "fields": {
+    "name": "Action"
+  }
+},
+{
+  "model": "app.genre",
+  "pk": 2,
+  "fields": {
+    "name": "Adventure"
+  }
+},
+{
+  "model": "app.genre",
+  "pk": 3,
+  "fields": {
+    "name": "Sci-Fi"
+  }
+},
+{
+  "model": "app.genre",
+  "pk": 4,
+  "fields": {
+    "name": "Drama"
+  }
+},
+{
+  "model": "app.genre",
+  "pk": 5,
+  "fields": {
+    "name": "Crime"
+  }
+},
+{
+  "model": "app.genre",
+  "pk": 6,
+  "fields": {
+    "name": "Thriller"
+  }
+},
+{
+  "model": "app.genre",
+  "pk": 7,
+  "fields": {
+    "name": "Fantasy"
+  }
+},
+{
+  "model": "app.genre",
+  "pk": 8,
+  "fields": {
+    "name": "Comedy"
+  }
+},
+{
+  "model": "app.genre",
+  "pk": 9,
+  "fields": {
+    "name": "Horror"
+  }
+},
+{
+  "model": "app.genre",
+  "pk": 10,
+  "fields": {
+    "name": "Romance"
+  }
+},
+{
+  "model": "app.genre",
+  "pk": 11,
+  "fields": {
+    "name": "Mystery"
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 1,
+  "fields": {
+    "uu_id": "81ff61b2-54ce-4a07-bed0-5b4f6065be74",
+    "title": "Interstellar",
+    "description": "A team of astronauts travel through a wormhole in search of a new home for humanity.",
+    "release_date": "2014-11-07",
+    "genre": 3,
+    "length": 169,
+    "image_card": "movie_images/Interstellar_image_PORSATG.jpg",
+    "image_cover": "movie_images/intresteller_poster_e5NvIMB.jpg",
+    "video": "https://www.youtube.com/watch?v=zSWdZVtXT7E",
+    "trailer_preview": "",
+    "movie_views": 1250005,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": false,
+    "rating": "8.7",
+    "director": "Christopher Nolan",
+    "cast": "Matthew McConaughey\r\nAnne Hathaway\r\nJessica Chastain\r\nMichael Caine\r\nMatt Damon",
+    "language": "English",
+    "country": "USA",
+    "age_limit": "13+",
+    "subtitles": "0-4|Welcome to this movie\r\n4-9|A story about courage and hope\r\n9-15|Watch till the end for a surprise\r\n15-20|Enjoy the journey with us",
+    "featured": true,
+    "recently_added": false,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 2,
+  "fields": {
+    "uu_id": "1ecedd2a-8c3f-4af7-9799-612a028376a2",
+    "title": "Avatar: The Way of Water",
+    "description": "Jake Sully and Neytiri protect their family while defending Pandora from a powerful new enemy.",
+    "release_date": "2022-12-16",
+    "genre": 1,
+    "length": 192,
+    "image_card": "movie_images/Avatar_image_VNlPfp7.jpeg",
+    "image_cover": "movie_images/avatar_poster_rLsRfDr.jpeg",
+    "video": "https://www.youtube.com/watch?v=d9MyW72ELq0",
+    "trailer_preview": "",
+    "movie_views": 980004,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": true,
+    "rating": "7.9",
+    "director": "James Cameron",
+    "cast": "Sam Worthington, Zoe Saldaña, Sigourney Weaver, Stephen Lang",
+    "language": "English",
+    "country": "USA",
+    "age_limit": "13+",
+    "subtitles": "0-4|Welcome to this movie\r\n4-9|A story about courage and hope\r\n9-15|Watch till the end for a surprise\r\n15-20|Enjoy the journey with us",
+    "featured": true,
+    "recently_added": false,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 3,
+  "fields": {
+    "uu_id": "d13308dd-65e2-4b51-9ef0-b52795a1d9a7",
+    "title": "The Dark Knight",
+    "description": "Batman faces the Joker, a criminal mastermind who throws Gotham City into chaos.",
+    "release_date": "2008-07-18",
+    "genre": 1,
+    "length": 152,
+    "image_card": "movie_images/The_Dark_Knight_image_j9oryNw.avif",
+    "image_cover": "movie_images/The_Dark_Knight_poster_7S4QQZP.jpeg",
+    "video": "https://www.youtube.com/watch?v=EXeTwQWrcwY",
+    "trailer_preview": "",
+    "movie_views": 2800004,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": true,
+    "rating": "9.0",
+    "director": "Christopher Nolan",
+    "cast": "Christian Bale, Heath Ledger, Aaron Eckhart, Gary Oldman, Michael Caine, Maggie Gyllenhaal",
+    "language": "English",
+    "country": "USA",
+    "age_limit": "13+",
+    "subtitles": "0-5|Get ready for an amazing story\r\n5-10|Filled with drama and emotion\r\n10-15|Watch till the end\r\n15-20|Only on Netflix Clone\r\n20-25|Enjoy the movie",
+    "featured": true,
+    "recently_added": false,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 4,
+  "fields": {
+    "uu_id": "9d8ceef5-af5e-4b59-954b-ab7d322177f1",
+    "title": "Inception",
+    "description": "A skilled thief enters dreams to steal secrets and perform impossible missions.",
+    "release_date": "2010-07-16",
+    "genre": 3,
+    "length": 148,
+    "image_card": "movie_images/Inception_image_Ql3zltZ.jpg",
+    "image_cover": "movie_images/Inception_poster_VBOkeLs.jpg",
+    "video": "https://www.youtube.com/watch?v=YoHD9XEInc0",
+    "trailer_preview": "",
+    "movie_views": 2700000,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": false,
+    "rating": "8.8",
+    "director": "Christopher Nolan",
+    "cast": "Leonardo DiCaprio\r\nJoseph Gordon-Levitt\r\nTom Hardy\r\nElliot Page",
+    "language": "English",
+    "country": "USA",
+    "age_limit": "13+",
+    "subtitles": "",
+    "featured": true,
+    "recently_added": false,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 5,
+  "fields": {
+    "uu_id": "417dfca0-eb00-44dd-bf8a-84e89c7c85c6",
+    "title": "RRR",
+    "description": "Two freedom fighters unite against the British Empire in an epic action drama.",
+    "release_date": "2022-03-25",
+    "genre": 1,
+    "length": 182,
+    "image_card": "movie_images/rrr_image_Jj9kjCJ.jpg",
+    "image_cover": "movie_images/rrr_poster_vGrARdC.jpg",
+    "video": "https://www.youtube.com/watch?v=f_vbAtFSEc0",
+    "trailer_preview": "",
+    "movie_views": 4500003,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": false,
+    "rating": "8.0",
+    "director": "S. S. Rajamouli",
+    "cast": "N. T. Rama Rao Jr.\r\nRam Charan\r\nAlia Bhatt\r\nAjay Devgn",
+    "language": "Telugu",
+    "country": "India",
+    "age_limit": "13+",
+    "subtitles": "",
+    "featured": true,
+    "recently_added": false,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 6,
+  "fields": {
+    "uu_id": "752bb09d-5a7b-4811-9756-a93efe90f3dc",
+    "title": "Pushpa: The Rise",
+    "description": "A daily wage worker rises through the ranks of the red sandalwood smuggling syndicate.",
+    "release_date": "2021-12-17",
+    "genre": 1,
+    "length": 179,
+    "image_card": "movie_images/pushpa_poster.jpeg",
+    "image_cover": "movie_images/pushpa_banner.jpeg",
+    "video": "https://www.youtube.com/watch?v=Q1NKMPhP8PY",
+    "trailer_preview": "",
+    "movie_views": 3800002,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": false,
+    "rating": "7.6",
+    "director": "Sukumar",
+    "cast": "Allu Arjun\r\nRashmika Mandanna\r\nFahadh Faasil\r\nSunil",
+    "language": "Telugu",
+    "country": "India",
+    "age_limit": "16+",
+    "subtitles": "",
+    "featured": true,
+    "recently_added": false,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 7,
+  "fields": {
+    "uu_id": "a9f27525-46c4-4130-baa4-a1c4840a9a7f",
+    "title": "Kalki 2898 AD",
+    "description": "A futuristic mythological action film inspired by the Mahabharata.",
+    "release_date": "2024-06-27",
+    "genre": 3,
+    "length": 181,
+    "image_card": "movie_images/kalki_poster.jpeg",
+    "image_cover": "movie_images/kalki_banner.jpeg",
+    "video": "https://www.youtube.com/watch?v=BfCIPsEGAS8",
+    "trailer_preview": "",
+    "movie_views": 3500001,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": false,
+    "rating": "8.1",
+    "director": "Nag Ashwin",
+    "cast": "Prabhas\r\nDeepika Padukone\r\nAmitabh Bachchan\r\nKamal Haasan",
+    "language": "Telugu",
+    "country": "India",
+    "age_limit": "13+",
+    "subtitles": "",
+    "featured": true,
+    "recently_added": true,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 8,
+  "fields": {
+    "uu_id": "e5778c4f-3e68-40e3-bb08-94a70612f02a",
+    "title": "Baahubali 2",
+    "description": "Amarendra Baahubali's story reaches its epic conclusion.",
+    "release_date": "2017-04-28",
+    "genre": 1,
+    "length": 167,
+    "image_card": "movie_images/baahubali_2_poster.jpeg",
+    "image_cover": "movie_images/baahubali_2_banner.jpeg",
+    "video": "https://www.youtube.com/watch?v=G62HrubdD6o",
+    "trailer_preview": "",
+    "movie_views": 5000001,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": false,
+    "rating": "8.2",
+    "director": "S. S. Rajamouli",
+    "cast": "Prabhas\r\nRana Daggubati\r\nAnushka Shetty\r\nTamannaah\r\nSathyaraj",
+    "language": "Telugu",
+    "country": "India",
+    "age_limit": "13+",
+    "subtitles": "",
+    "featured": true,
+    "recently_added": false,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 9,
+  "fields": {
+    "uu_id": "cd91fb9d-d41d-4da0-a0ba-6a8968359c71",
+    "title": "Dangal",
+    "description": "A former wrestler trains his daughters to become world-class champions.",
+    "release_date": "2016-12-23",
+    "genre": 4,
+    "length": 161,
+    "image_card": "movie_images/dongal_poster.jpeg",
+    "image_cover": "movie_images/dongal_banner.jpeg",
+    "video": "https://www.youtube.com/watch?v=x_7YlGv9u1g",
+    "trailer_preview": "",
+    "movie_views": 3200002,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": false,
+    "rating": "8.4",
+    "director": "Nitesh Tiwari",
+    "cast": "Aamir Khan\r\nFatima Sana Shaikh\r\nSanya Malhotra\r\nSakshi Tanwar",
+    "language": "Hindi",
+    "country": "India",
+    "age_limit": "13+",
+    "subtitles": "",
+    "featured": true,
+    "recently_added": false,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 10,
+  "fields": {
+    "uu_id": "e3b36828-2ef1-4649-9488-58415274a815",
+    "title": "Pathaan",
+    "description": "An elite RAW agent returns to stop a dangerous terrorist attack.",
+    "release_date": "2023-01-25",
+    "genre": 1,
+    "length": 146,
+    "image_card": "movie_images/pathaan_banner.jpeg",
+    "image_cover": "movie_images/pathaan_poster.jpeg",
+    "video": "https://www.youtube.com/watch?v=vqu4z34wENw",
+    "trailer_preview": "",
+    "movie_views": 3000000,
+    "is_trending": true,
+    "is_top_rated": false,
+    "is_original": false,
+    "rating": "6.8",
+    "director": "Siddarth Anand",
+    "cast": "Shah Rukh Khan\r\nDeepika Padukone\r\nJohn Abraham",
+    "language": "Hindi",
+    "country": "India",
+    "age_limit": "13+",
+    "subtitles": "",
+    "featured": true,
+    "recently_added": true,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 11,
+  "fields": {
+    "uu_id": "09517be2-01ed-474b-bbae-b85f56e5f051",
+    "title": "3 Idiots",
+    "description": "Three engineering students discover the true meaning of education and friendship.",
+    "release_date": "2009-12-25",
+    "genre": 8,
+    "length": 170,
+    "image_card": "movie_images/3_idiots_poster.jpeg",
+    "image_cover": "movie_images/3_idiots_banner.jpeg",
+    "video": "https://www.youtube.com/watch?v=K0eDlFX9GMc",
+    "trailer_preview": "",
+    "movie_views": 3500000,
+    "is_trending": false,
+    "is_top_rated": true,
+    "is_original": false,
+    "rating": "8.4",
+    "director": "Rajkumar Hirani",
+    "cast": "Aamir Khan\r\nR. Madhavan\r\nSharman Joshi\r\nKareena Kapoor\r\nBoman Irani",
+    "language": "Hindi",
+    "country": "India",
+    "age_limit": "13+",
+    "subtitles": "0-4|Welcome to this movie\r\n4-9|A story about courage and hope\r\n9-15|Watch till the end for a surprise\r\n15-20|Enjoy the journey with us",
+    "featured": true,
+    "recently_added": false,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 12,
+  "fields": {
+    "uu_id": "1fb1527c-afc1-48b6-96c1-f5eb1b958519",
+    "title": "Salaar: Part 1 – Ceasefire",
+    "description": "Two childhood friends become enemies in a brutal kingdom filled with political conflicts.",
+    "release_date": "2023-12-22",
+    "genre": 1,
+    "length": 175,
+    "image_card": "movie_images/salaar_poster.jpeg",
+    "image_cover": "movie_images/salaar_banner.jpg",
+    "video": "https://www.youtube.com/watch?v=4GPvYMKtrtI",
+    "trailer_preview": "",
+    "movie_views": 4200000,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": false,
+    "rating": "8.2",
+    "director": "Prashanth Neel",
+    "cast": "Prabhas\r\nPrithviraj Sukumaran\r\nShruti Haasan\r\nJagapathi Babu",
+    "language": "Telugu",
+    "country": "India",
+    "age_limit": "16+",
+    "subtitles": "",
+    "featured": true,
+    "recently_added": true,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 13,
+  "fields": {
+    "uu_id": "45c95ea4-845f-4825-b641-c65cc05955ba",
+    "title": "Devara",
+    "description": "A fearless village leader protects his people against dangerous enemies.",
+    "release_date": "2024-09-27",
+    "genre": 1,
+    "length": 175,
+    "image_card": "movie_images/salaar_poster_PYfAZ8N.jpeg",
+    "image_cover": "movie_images/salaar_banner_3l6k70q.jpg",
+    "video": "https://www.youtube.com/watch?v=rc61YHl1PFY",
+    "trailer_preview": "",
+    "movie_views": 3900000,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": false,
+    "rating": "7.9",
+    "director": "Koratala Siva",
+    "cast": "N. T. Rama Rao Jr.\r\nJanhvi Kapoor\r\nSaif Ali Khan",
+    "language": "Telugu",
+    "country": "India",
+    "age_limit": "16+",
+    "subtitles": "",
+    "featured": true,
+    "recently_added": true,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 14,
+  "fields": {
+    "uu_id": "f739401c-43ce-4c68-b10e-8e0c9324108b",
+    "title": "Hanu-Man",
+    "description": "A young man discovers divine powers inspired by Lord Hanuman.",
+    "release_date": "2024-01-12",
+    "genre": 7,
+    "length": 158,
+    "image_card": "movie_images/hanuman_poster.jpeg",
+    "image_cover": "movie_images/hanuman_banner.jpeg",
+    "video": "https://www.youtube.com/watch?v=Oqvly3MvlXA",
+    "trailer_preview": "",
+    "movie_views": 3100001,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": false,
+    "rating": "8.4",
+    "director": "Prasanth Varma",
+    "cast": "Teja Sajja\r\nAmritha Aiyer\r\nVaralaxmi Sarathkumar",
+    "language": "Telugu",
+    "country": "India",
+    "age_limit": "U",
+    "subtitles": "",
+    "featured": true,
+    "recently_added": true,
+    "top10": true
+  }
+},
+{
+  "model": "app.movie",
+  "pk": 15,
+  "fields": {
+    "uu_id": "6141fc94-6499-494e-9ea3-c63ba540fff1",
+    "title": "Lucky Baskhar",
+    "description": "A middle-class banker gets caught in financial scams while chasing success.",
+    "release_date": "2024-10-31",
+    "genre": 5,
+    "length": 148,
+    "image_card": "movie_images/lucky_basker_poster.jpeg",
+    "image_cover": "movie_images/lucky_basker_banner.jpeg",
+    "video": "https://www.youtube.com/watch?v=K1gQjXQvQnM",
+    "trailer_preview": "",
+    "movie_views": 2600001,
+    "is_trending": true,
+    "is_top_rated": true,
+    "is_original": false,
+    "rating": "8.2",
+    "director": "Venky Atluri",
+    "cast": "Dulquer Salmaan\r\nMeenakshi Chaudhary",
+    "language": "Telugu",
+    "country": "India",
+    "age_limit": "13+",
+    "subtitles": "",
+    "featured": true,
+    "recently_added": true,
+    "top10": true
+  }
+}
+]
