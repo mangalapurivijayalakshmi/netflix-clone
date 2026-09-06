@@ -126,7 +126,7 @@
     "is_original": true,
     "rating": "7.9",
     "director": "James Cameron",
-    "cast": "Sam Worthington, Zoe Saldaña, Sigourney Weaver, Stephen Lang",
+    "cast": "Sam Worthington, Zoe SaldaÃ±a, Sigourney Weaver, Stephen Lang",
     "language": "English",
     "country": "USA",
     "age_limit": "13+",
@@ -411,7 +411,7 @@
   "pk": 12,
   "fields": {
     "uu_id": "1fb1527c-afc1-48b6-96c1-f5eb1b958519",
-    "title": "Salaar: Part 1 – Ceasefire",
+    "title": "Salaar: Part 1 â€“ Ceasefire",
     "description": "Two childhood friends become enemies in a brutal kingdom filled with political conflicts.",
     "release_date": "2023-12-22",
     "genre": 1,
