@@ -8,8 +8,7 @@
 
 ## 🚀 Live Demo
 
-🔗 **[Live URL — Render Deployment]** *(add your link here once live)*
-
+🔗 **Live URL:** [https://netflix-clone-nbcj.onrender.com](https://netflix-clone-nbcj.onrender.com)
 ---
 
 ## 📸 Screenshots
