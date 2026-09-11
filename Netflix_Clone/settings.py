@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-dev-only')
 
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['netflix-clone-nbcj.onrender.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['16.170.211.63','netflix-clone-nbcj.onrender.com', '127.0.0.1', 'localhost']
 
 CSRF_TRUSTED_ORIGINS = ['https://netflix-clone-nbcj.onrender.com']
 
