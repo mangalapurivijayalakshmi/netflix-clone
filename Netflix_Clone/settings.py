@@ -105,7 +105,7 @@ import dj_database_url
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
+        default='postgresql://netflix_clone_db_y4l1_user:W0XARJiao48oB73d3XcADk4STonnY4hs@dpg-daelrmvqj5pc73a1d020-a.singapore-postgres.render.com/netflix_clone_db_y4l1',
         conn_max_age=600
     )
 }
